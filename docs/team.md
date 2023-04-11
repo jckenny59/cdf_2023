@@ -3,19 +3,19 @@ layout: page
 title: Team
 ---
 
-### Professorship of Digital Fabrication 
+## Professorship of Digital Fabrication 
+### Kathrin Dörfler
+### Lidia Atanasova
 
-## Kathrin Dörfler
-## Lidia Atanasova
-
-### Professorship of Structural Design
-
-## Pierluigi D'Acunto
-## Frederic Chovghi
+## Professorship of Structural Design
+### Pierluigi D'Acunto
+### Frederic Chovghi
 
 ### Majid Hojjad
+BMW
 
-### Daniela Mitterberger
+### Daniela Mitterberger 
+Gramazio Kohler Research
 
 
 
