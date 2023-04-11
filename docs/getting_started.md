@@ -24,17 +24,17 @@ Execute the commands below in Anaconda Prompt:
     (base) conda config --add channels conda-forge
 
 #### Windows
-    (base) conda create -n rsrd compas_fab=0.22.0 --yes
-    (base) conda activate rsrd
+    (base) conda create -n cdf compas_fab=0.22.0 --yes
+    (base) conda activate cdf
 
 #### Mac
-    (base) conda create -n rsrd compas_fab=0.22.0 python.app --yes
-    (base) conda activate rsrd
+    (base) conda create -n cdf compas_fab=0.22.0 python.app --yes
+    (base) conda activate cdf
     
 
 #### Verify Installation
 
-    (rsrd) pip show compas_fab
+    (cdf) pip show compas_fab
 
     Name: compas-fab
     Version: 0.22.0
@@ -62,9 +62,9 @@ Create a workspace directory:
 
     C:\Users\YOUR_USERNAME\workspace\projects
 
-Then open Github Desktop and clone the [Robot See Robot Do repository](https://github.com/augmentedfabricationlab/robot_see_robot_do) repository into your projects folder. Then install the repo within your environment (in editable mode):
+Then open Github Desktop and clone the [CDF 2023 repository](https://github.com/augmentedfabricationlab/cdf_2023) repository into your projects folder. Then install the repo within your environment (in editable mode):
 
-    (rsrd) pip install -e your_filepath_to_robot_see_robot_do
-    (rsrd) python -m compas_rhino.install -p robot_see_robot_do -v 7.0
+    (rsrd) pip install -e your_filepath_to_cdf_2023
+    (rsrd) python -m compas_rhino.install -p cdf_2023 -v 7.0
 
 **Voilà! You can now go to VS Code, Rhino or Grasshopper to run the example files!**
