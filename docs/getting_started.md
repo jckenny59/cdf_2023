@@ -24,11 +24,11 @@ Execute the commands below in Anaconda Prompt:
     (base) conda config --add channels conda-forge
 
 #### Windows
-    (base) conda create -n cdf compas_fab=0.22.0 --yes
+    (base) conda create -n cdf compas_fab --yes
     (base) conda activate cdf
 
 #### Mac
-    (base) conda create -n cdf compas_fab=0.22.0 python.app --yes
+    (base) conda create -n cdf compas_fab python.app --yes
     (base) conda activate cdf
     
 
@@ -43,17 +43,17 @@ Execute the commands below in Anaconda Prompt:
 
 #### Install on Rhino
 
-    (rsrd) python -m compas_rhino.install -v 7.0
+    (cdf) python -m compas_rhino.install -v 7.0
 
 
 ### 2. Installation of Dependencies
 
-    (rsrd) conda install git
+    (cdf) conda install git
 
 #### UR Fabrication Control
     
-    (rsrd) python -m pip install git+https://github.com/augmentedfabricationlab/ur_fabrication_control@master#egg=ur_fabrication_control
-    (rsrd) python -m compas_rhino.install -p ur_fabrication_control -v 7.0
+    (cdf) python -m pip install git+https://github.com/augmentedfabricationlab/ur_fabrication_control@master#egg=ur_fabrication_control
+    (cdf) python -m compas_rhino.install -p ur_fabrication_control -v 7.0
 
 
 ### 3. Cloning the Course Repository
@@ -64,7 +64,7 @@ Create a workspace directory:
 
 Then open Github Desktop and clone the [CDF 2023 repository](https://github.com/augmentedfabricationlab/cdf_2023) repository into your projects folder. Then install the repo within your environment (in editable mode):
 
-    (rsrd) pip install -e your_filepath_to_cdf_2023
-    (rsrd) python -m compas_rhino.install -p cdf_2023 -v 7.0
+    (cdf) pip install -e your_filepath_to_cdf_2023
+    (cdf) python -m compas_rhino.install -p cdf_2023 -v 7.0
 
 **Voilà! You can now go to VS Code, Rhino or Grasshopper to run the example files!**

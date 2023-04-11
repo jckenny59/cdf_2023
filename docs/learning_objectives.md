@@ -3,9 +3,9 @@ layout: page
 title: Learning Objectives
 ---
 
-This workshop will introduce students to XR development and Robotics using an object-aware AR app and a collaborative robot arm. The prepared sessions build upon each other towards the ability to develop an interactive architectural scenario which incorporates real-time robotic interaction: 
+This workshop will introduce students to XR development and Robotics using a custom AR app and a two mobile collaborative robotic arms. The prepared sessions build upon each other towards the ability to develop an interactive architectural scenario which incorporates real-time robotic interaction: 
 
-* Students will learn the basic concepts of human-robot collaboration
+* Students will learn the basic concepts of human-robot cooperation
 * Students will learn the basics of assembly information modelling
 * Students will learn specific workflows for authoring AR content for assembly routines
 * Students will learn to author and prototype robotic workflows and simulations 

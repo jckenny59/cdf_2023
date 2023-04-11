@@ -60,7 +60,8 @@ html {
 
 body {
   /* color: #515151;*/
-  background-color: pink;
+  /*background-color: pink;*/
+  background-color: rgb(229, 229, 229);
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
