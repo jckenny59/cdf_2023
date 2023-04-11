@@ -7,15 +7,15 @@ title: Schedule
 
 | Date  | Time        | Session | Topic |
 |-------|-------------|---------|--------|
-| 19.4. | 10:00-14:00 | 1       |  Welcome, introduction & getting started    |
-|       | 15:00-19:00 | 2       |  Introduction of RSRD workflow & demo     |
-| 20.4. | 10:00-14:00 | 3       |  In-depth explanation of RSRD worflow   |
+|  8.5. | 09:00-12:00 | 1       |  Welcome, introduction & getting started    |
+|       | 13:00-18:00 | 2       |  Introduction of RSRD workflow & demo     |
+|  9.5. | 10:00-14:00 | 3       |  In-depth explanation of RSRD worflow   |
 |       | 15:00-19:00 | 4       |  Design explorations & presentations     |
-| 21.4. | 10:00-14:00 | 5       |  Fabrication     |
+| 10.5. | 10:00-14:00 | 5       |  Fabrication     |
 |       | 15:00-19:00 | 6       |  Fabrication     |
-| 22.4. | 10:00-14:00 | 7       |  Fabrication      |
+| 11.5. | 10:00-14:00 | 7       |  Fabrication      |
 |       | 15:00-19:00 | 8       |  Fabrication      |
-| 23.4. | 10:00-14:00 | 9       |  Fabrication & preparation review presentation      |
+| 12.5. | 10:00-14:00 | 9       |  Fabrication & preparation review presentation      |
 |       | 15:00-19:00 | 10      |  Review and reflection     |
 
 
