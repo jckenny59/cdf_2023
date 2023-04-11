@@ -3,72 +3,77 @@ layout: page
 title: Schedule
 ---
 
-### Session Blocks
+### Part 1 - Computational Design
 
 | Date  | Time        | Session | Topic |
 |-------|-------------|---------|--------|
 |  8.5. | 09:00-12:00 | 1       |  Welcome, introduction & getting started    |
-|       | 13:00-18:00 | 2       |  Introduction of RSRD workflow & demo     |
-|  9.5. | 10:00-14:00 | 3       |  In-depth explanation of RSRD worflow   |
-|       | 15:00-19:00 | 4       |  Design explorations & presentations     |
-| 10.5. | 10:00-14:00 | 5       |  Fabrication     |
-|       | 15:00-19:00 | 6       |  Fabrication     |
-| 11.5. | 10:00-14:00 | 7       |  Fabrication      |
-|       | 15:00-19:00 | 8       |  Fabrication      |
-| 12.5. | 10:00-14:00 | 9       |  Fabrication & preparation review presentation      |
-|       | 15:00-19:00 | 10      |  Review and reflection     |
+|       | 13:00-18:00 | 2       |  Introduction of workflow & demo     |
+|  9.5. | 09:00-12:00 | 3       |  Hands-on exercises   |
+|       | 13:00-18:00 | 4       |  Form groups & start developing concept ideas     |
+| 10.5. | 09:00-12:00 | 5       |  1. Design explorations     |
+|       | 13:00-18:00 | 6       |  1. Feedback session     |
+| 11.5. | 09:00-12:00 | 7       |  2. Design explorations      |
+|       | 13:00-18:00 | 8       |  2. Feedback session      |
+| 12.5. | 09:00-12:00 | 9       |  Project Presentations     |
+|       | 13:00-18:00 | 10      |  Review and reflection     |
 
 
-### 19.4.
+### 8.5.
 #### Session 1
-10:00-14:00
+09:00-12:00
 * Welcome and workshop introduction 
     * Input lecture Augmented Bricklaying
-    * Input lecture HRCA
+    * Input lecture Tie a knot
 * Introduction by students
 * Getting started
 
 #### Session 2 
-15:00-19:00
-* Introduction of RSRD workflow + code structure
-* Rope joints experimentation
-* Demo of RSRD workflow
+13:00-18:00
+* Introduction to the computational design workflow + code structure
 
-
-### 20.4.
+### 9.5.
 #### Session 3
-10:00-14:00
-* Design tool (ex1+ex2)
+09:00-12:00
+* Hands-on exercises
 * Design explorations with design tool
 * Robot planning tool (ex3+ex4)
 * Design explorations with robotic constraints
-* Scanning procedure (ex5)
-* Scanning explorations
-* RSRD workflow (ex6)
-* Demo of RSRD workflow
+* Fabrication workflow (ex6)
+* Demo of Fabrication workflow
 
 #### Session 4
-15:00-19:00
-* Input lecture Incon
+13:00-18:00
+* Form groups & start developing concept ideas
 * Design studies
-* Design presentations
 
-### 21.4.
-#### Session 5 & 6
-10:00-19:00
-* Fabrication
+### 10.5.
+#### Session 5
+09:00-12:00
+* 1. Design explorations 
 
-### 22.4.
-#### Session 7 & 8
-10:00-19:00
-* Fabrication
+#### Session 6
+13:00-18:00
+* 1. Feedback session  
 
-### 23.4.
+### 11.5.
+#### Session 7
+09:00-12:00
+* 2. Design explorations 
+
+#### Session 8
+13:00-18:00
+* 2. Feedback session 
+
+### 12.5.
 #### Session 9
-10:00-14:00
-* Fabrication
-* Preparation presentation
+09:00-12:00
+* Project Presentations 
 
 #### Session 10
-15:00-19:00
+15:00-18:00
 * Review and reflection with external guests
+* Define groups and tasks for the fabrication week
+
+
+### Part 2 - Computational Fabrication
