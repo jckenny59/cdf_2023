@@ -8,8 +8,9 @@ import math
 import compas
 
 from copy import deepcopy
-from compas.geometry import Frame, Vector
+from compas.geometry import Frame, Vector, Plane
 from compas.geometry import Transformation, Translation, Rotation
+from compas.geometry import intersection_line_plane
 from compas.geometry import distance_point_point, distance_line_line
 from compas.datastructures import Network, mesh_offset
 from compas.artists import Artist
@@ -384,6 +385,18 @@ class Assembly(FromToData, FromToJson):
             collision = True if True in results else False
         return collision
 
+    def check_ground_collision(self, option_elems):
+        """Check if an element touches the ground.
+        """
+
+        ground_plane = Plane.from_frame(Frame.worldXY())
+
+        for option in option_elems:
+            intersection = intersection_line_plane(option.line, ground_plane)
+            if intersection != None:
+                return intersection
+
+
     def static_equilibrium_check(self, support, option_elems, allow_temp_support=True):
         """Check if the structure is in equilibrium.
         """
@@ -395,13 +408,13 @@ class Assembly(FromToData, FromToJson):
 
         planes = [Artist(element.frame).draw() for key, element in self.elements()]
         [plane.Translate(plane.ZAxis*-0.4) for plane in planes]
-        elements_breps = [rg.Cylinder(rg.Circle(plane, 0.01), 0.8) for plane in planes]
+        elements_geo = [rg.Cylinder(rg.Circle(plane, 0.01), 0.8) for plane in planes] # built elements as breps
 
         option_plane = Artist(option_elems[0].frame).draw()
         option_plane.Translate(option_plane.ZAxis*-0.4)
-        elements_breps.append(rg.Cylinder(rg.Circle(option_plane, 0.01), 0.8)) # built elements + option robot
+        elements_geo.append(rg.Cylinder(rg.Circle(option_plane, 0.01), 0.8)) # built elements + option robot as breps
 
-        elements_breps = [geo.ToBrep(True, True) for geo in elements_breps]
+        elements_breps = [geo.ToBrep(True, True) for geo in elements_geo]
         e = elements_breps
 
         sa = rs.BoundingBox(support) #support area in which the resultant shall lie on
@@ -450,6 +463,11 @@ class Assembly(FromToData, FromToJson):
                 s_int = i
 
             res = res_loc
+
+            if static_equilibrium == False:
+                break
+            else:
+                continue
 
         if res == False:
             res = None
@@ -640,7 +658,7 @@ class Assembly(FromToData, FromToJson):
         # keys = [key for key, element in self.elements()]
         # return [(key, self.element(key).connectors(state)) for key in keys]
 
-    def connectors(self, state='all'):
+    def connectors_ranges(self, state='all'):
         """ Iterate over the connectors of the assembly elements.
 
         Parameters
