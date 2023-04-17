@@ -8,7 +8,7 @@ import math
 from compas.datastructures import Mesh
 from compas.datastructures import mesh_transform
 
-from compas.geometry import Frame, Vector, Line, Cone
+from compas.geometry import Frame, Vector, Line, Cone, Point
 from compas.geometry import Box
 from compas.geometry import Transformation, Translation, Rotation
 from compas.geometry import cross_vectors
@@ -67,6 +67,8 @@ class Element(object):
         self.connector_range_2 = None
         self.connector_1_state = True
         self.connector_2_state = True
+        self.connector_1_joints = None
+        self.connector_2_joints = None
         self.line = None
         self._type = ''
         self._base_frame = None
@@ -400,6 +402,12 @@ class Element(object):
         if self.line:
             d['line'] = self.line.to_data()
 
+        if self.connector_1_joints:
+            d['connector_1_joints'] = [f.to_data() for f in self.connector_1_joints]
+
+        if self.connector_2_joints:
+            d['connector_2_joints'] = [f.to_data() for f in self.connector_2_joints]
+
         if self._type:
             d['_type'] = self._type
 
@@ -438,6 +446,10 @@ class Element(object):
             self.connector_2_state = data['connector_2_state']
         if 'line' in data:
             self.line = Line.from_data(data['line'])
+        if 'connector_1_joints' in data:
+            self.connector_1_joints = [Point.from_data(d) for d in data['connector_1_joints']]
+        if 'connector_2_joints' in data:
+            self.connector_2_joints = [Point.from_data(d) for d in data['connector_2_joints']]
         if '_type' in data:
             self._type = data['_type']
         if '_base_frame' in data:
@@ -492,6 +504,10 @@ class Element(object):
             self.connector_range_2.transform(transformation)
         if self.line:
             self.line.transform(transformation)
+        if self.connector_1_joints:
+            [f.transform(transformation) for f in self.connector_1_joints]
+        if self.connector_2_joints:
+            [f.transform(transformation) for f in self.connector_2_joints]
         if self._base_frame:
             self._base_frame.transform(transformation)
         if self._source:
@@ -550,6 +566,10 @@ class Element(object):
             elem.connector_2_state = self.connector_2_state
         if self.line:
             elem.line = self.line.copy()
+        if self.connector_1_joints:
+            elem.connector_1_joints = [f.copy() for f in self.connector_1_joints]
+        if self.connector_2_joints:
+            elem.connector_2_joints = [f.copy() for f in self.connector_2_joints]
         if self._type:
             elem._type = self._type
         if self._base_frame:
