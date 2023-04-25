@@ -4,7 +4,7 @@ title: Schedule
 ---
 
 ### Part 1 - Computational Design 
-8.-12. May
+Monday-Friday, 8.-12. May
 
 
 | Date    | Time        | Session | Topic                                                 |
@@ -70,4 +70,5 @@ title: Schedule
     * Fabrication test of the proposed design
 
 ### Part 2 - Computational Fabrication
-24.-28. July 09:00-18:00
+Monday-Friday, 24.-28. July
+Time: 09:00-18:00
