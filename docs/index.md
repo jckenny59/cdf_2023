@@ -4,7 +4,7 @@ title: About
 ---
 # About
 
-The interdisciplinary seminar "Computational Design and Digital Fabrication" aims to bridge fundamental principles of geometric computation and structural design and use these insights to develop new algorithms and tools for robotic fabrication in architecture. At the interface of the disciplines of architecture, structural design and engineering, and digital fabrication, students are taught innovative computational design solutions for advanced digital construction techniques at various scales.
+The interdisciplinary seminar ["Computational Design and Digital Fabrication"](https://www.arc.ed.tum.de/df/teaching/computational-design-and-fabrication/) aims to bridge fundamental principles of geometric computation and structural design and use these insights to develop new algorithms and tools for robotic fabrication in architecture. At the interface of the disciplines of architecture, structural design and engineering, and digital fabrication, students are taught innovative computational design solutions for advanced digital construction techniques at various scales.
 
 <figure>
   <img src="{{site.baseurl}}images/title_img.jpg" alt="Human-Robot Cooperative Assembly of Spatial Structures." style="width:100%" class="center">
