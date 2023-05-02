@@ -4,69 +4,71 @@ title: Schedule
 ---
 
 ### Part 1 - Computational Design 
-8.-12. May
+Monday-Friday, 8.-12. May
 
 
-| Date    | Time        | Session | Topic                                           |
-|---------|-------------|---------|-------------------------------------------------|
-|  8. May | 09:00-12:00 | 1       |  Welcome, introduction & getting started        |
-|         | 13:00-18:00 | 2       |  Introduction of workflow & demo                |
-|  9. May | 09:00-12:00 | 3       |  Hands-on exercises                             |
-|         | 13:00-18:00 | 4       |  Form groups & start developing concept ideas   |
-| 10. May | 09:00-12:00 | 5       |  Design explorations Part 1                     |
-|         | 13:00-18:00 | 6       |  Feedback session Part 1                        |
-| 11. May | 09:00-12:00 | 7       |  Design explorations Part 2                     |
-|         | 13:00-18:00 | 8       |  Feedback session Part 2                        |
-| 12. May | 09:00-12:00 | 9       |  Project Presentations                          |
-|         | 13:00-18:00 | 10      |  Review and reflection                          |
+| Date    | Time        | Session | Topic                                                 |
+|---------|-------------|---------|-------------------------------------------------------|
+|  8. May | 09:00-12:00 | 1       |  Welcome & introduction round                       |
+|         | 13:00-18:00 | 2       |  Introduction to the computational design workflow    |
+|  9. May | 09:00-12:00 | 3       |  Demo & design explorations                         |
+|         | 13:00-18:00 | 4       |  Concept design presentation                          |
+| 10. May | 09:00-12:00 | 5       |  Design explorations                                  |
+|         | 13:00-18:00 | 6       |  Final design presentation & forming focus groups     |
+| 11. May | 09:00-12:00 | 7       |  Work session in focus groups                         |
+|         | 13:00-18:00 | 8       |  Progress presentation of focus groups                |
+| 12. May | 09:00-12:00 | 9       |  Finalizing final proposal                            |
+|         | 13:00-18:00 | 10      |  Final presentation                                   |
 
-
-### 8. May
+### Monday, 8. May
 #### Session 1: 09:00-12:00
-* Welcome and workshop introduction 
-    * Input lecture Augmented Bricklaying
-    * Input lecture Tie a knot
-* Introduction by students
-* Getting started
+* Welcome & introduction round
+* Workshop introduction & theoretical basics
+    * Topic introduction (Lidia Atanasova)
+    * Fabrication-aware design & digital fabrication (Kathrin Dörfler)
+    * Structural design & reciprocal frame structures (Pierluigi D'Acunto & Frederic Chovghi)
+    * Computational mechanics (Majid Hojjat)
+* Announce interdisciplinary groups (8 x 3 students)
+* Trouble shooting installation
 
 #### Session 2: 13:00-18:00
-* Introduction to the computational design workflow + code structure
+* Introduction to the computational design workflow + example files
+* First concepts & design explorations
 
-### 9. May
+### Tuesday, 9. May
 #### Session 3: 09:00-12:00
-* Design explorations with design tool
-* Robot planning tool (ex3+ex4)
-* Design explorations with robotic constraints
-* Fabrication workflow (ex6)
-* Demo of the fabrication workflow
-* Hands-on exercises
+* Fabrication demo
+* Design explorations
 
 #### Session 4: 13:00-18:00
-* Form groups & start developing concept ideas
-* Design studies
+* Concept design presentation
+* Feedback session
 
-### 10. May
+### Wednesday, 10. May
 #### Session 5: 09:00-12:00
-* Design explorations Part 1
+* Design explorations
 
 #### Session 6: 13:00-18:00
-* Feedback session Part 1
+* Final design presentation
+* Discussion on final design direction
+* Formation of focus groups (2 x design, 2 x structural feedback, 2 x joints, 2 x robotic path planning)
 
-### 11. May
+### Thursday, 11. May
 #### Session 7: 09:00-12:00
-* Design explorations Part 2
+* Work session in focus groups
 
 #### Session 8: 13:00-18:00
-* Feedback session Part 2
+* Progress presentation of focus groups 
 
-### 12. May
+### Friday, 12. May
 #### Session 9: 09:00-12:00
-* Project presentations 
+* Finalizing final proposal in focus groups and merging presentations
 
 #### Session 10: 15:00-18:00
-* Review and reflection with external guests
-* Define groups and tasks for the fabrication week
-
+* Final presentation
+    * Finished simulation of the design proposal
+    * Fabrication test of the proposed design
 
 ### Part 2 - Computational Fabrication
-24.-28. July 09:00-18:00
+Monday-Friday, 24.-28. July
+Time: 09:00-18:00

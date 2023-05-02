@@ -11,7 +11,7 @@ title:            Computational Design and Fabrication
 tagline:          'CDF 2023'
 description:      'SEMINAR'
 baseurl: "/cdf_2023/" # the subpath of your site, e.g. /blog
-url: "https://le-ar-n.github.io/cdf_2023" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://le-ar-n.github.io/cdf_2023/" # the base hostname & protocol for your site, e.g. http://example.com
 
 paginate:         5
 
