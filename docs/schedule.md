@@ -9,18 +9,18 @@ Monday-Friday, 8.-12. May
 
 | Date    | Time        | Session | Topic                                                 |
 |---------|-------------|---------|-------------------------------------------------------|
-|  8. May | 09:00-12:00 | 1       |  Welcome & introduction round                         |
-|         | 13:00-18:00 | 2       |  Introduction to the computational design workflow    |
-|  9. May | 09:00-12:00 | 3       |  Demo & design explorations                           |
-|         | 13:00-18:00 | 4       |  Concept design presentation                          |
+|  8. May | 09:00-12:00 | 1       |  Welcome & introduction                               |
+|         | 13:00-18:00 | 2       |  Theoretical basics & first design explorations       |
+|  9. May | 09:00-12:00 | 3       |  Fabrication demo & design explorations               |
+|         | 13:00-18:00 | 4       |  Concept design discussion & design explorations      |
 | 10. May | 09:00-12:00 | 5       |  Design explorations                                  |
-|         | 13:00-18:00 | 6       |  Final design presentation & forming focus groups     |
-| 11. May | 09:00-12:00 | 7       |  Work session in focus groups                         |
-|         | 13:00-18:00 | 8       |  Progress presentation of focus groups                |
+|         | 13:00-18:00 | 6       |  Design explorations                                  |
+| 11. May | 09:00-12:00 | 7       |  Concept design presentation & discussion             |
+|         | 13:00-18:00 | 8       |  Work session in focus groups                         |
 | 12. May | 09:00-12:00 | 9       |  Finalizing final proposal                            |
-|         | 13:00-18:00 | 10      |  Final presentation                                   |
+|         | 15:00-18:00 | 10      |  Final design presentation                            |
 
-### Monday, 8. May
+### DAY 1, Monday, 8. May
 #### Session 1: 09:00-12:00 (Lidia Atanasova & Frederic Chovghi)
 * Welcome & introduction round 
 * Announce interdisciplinary groups (8 x 3 students)
@@ -36,7 +36,7 @@ Monday-Friday, 8.-12. May
     * Computational mechanics (Majid Hojjat)
 * First concepts & design explorations
 
-### Tuesday, 9. May
+### DAY 2, Tuesday, 9. May
 #### Session 3: 09:00-12:00
 * Fabrication demo
 * Design explorations
@@ -45,14 +45,14 @@ Monday-Friday, 8.-12. May
 * Concept design discussion & feedback session
 * Design explorations
 
-### Wednesday, 10. May
+### DAY 3, Wednesday, 10. May
 #### Session 5: 09:00-12:00
 * Design explorations
 
 #### Session 6: 13:00-18:00
 * Design explorations
 
-### Thursday, 11. May
+### DAY 4, Thursday, 11. May
 #### Session 7: 09:00-12:00
 * Concept design presentation & discussion on further design direction
 * Formation of focus groups (2 x design, 2 x structural feedback, 2 x joints, 2 x robotic path planning)
@@ -60,7 +60,7 @@ Monday-Friday, 8.-12. May
 #### Session 8: 13:00-18:00
 * Work session in focus groups
 
-### Friday, 12. May
+### DAY 5, Friday, 12. May
 #### Session 9: 09:00-12:00
 * Finalizing final proposal in focus groups and merging presentations
 
@@ -68,7 +68,7 @@ Monday-Friday, 8.-12. May
 * Final design presentation
     * Finished simulation of the design proposal
     * Fabrication test of the proposed design (?)
-* Apero
+* Apéro
 
 ### Part 2 - Computational Fabrication
 Monday-Friday, 24.-28. July
