@@ -9,10 +9,10 @@ Monday-Friday, 8.-12. May
 
 | Date    | Time        | Session | Topic                                                 |
 |---------|-------------|---------|-------------------------------------------------------|
-|  8. May | 09:00-12:00 | 1       |  Welcome & introduction                               |
-|         | 13:00-18:00 | 2       |  Theoretical basics & first design explorations       |
-|  9. May | 09:00-12:00 | 3       |  Fabrication demo & design explorations               |
-|         | 13:00-18:00 | 4       |  Concept design discussion & design explorations      |
+|  8. May | 09:00-12:00 | 1       |  Welcome & seminar introduction                       |
+|         | 13:00-18:00 | 2       |  Theoretical basics                                   |
+|  9. May | 09:00-12:00 | 3       |  Computational design workflow & first concepts       |
+|         | 13:00-18:00 | 4       |  Fabrication demo & concept design discussion         |
 | 10. May | 09:00-12:00 | 5       |  Design explorations                                  |
 |         | 13:00-18:00 | 6       |  Design explorations                                  |
 | 11. May | 09:00-12:00 | 7       |  Concept design presentation & discussion             |
