@@ -37,7 +37,7 @@ Execute the commands below in Anaconda Prompt:
     (cdf) pip show compas_fab
 
     Name: compas-fab
-    Version: 0.22.0
+    Version: 0.27.0
     Summary: Robotic fabrication package for the COMPAS Framework
     ...
 

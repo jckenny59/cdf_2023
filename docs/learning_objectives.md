@@ -3,12 +3,12 @@ layout: page
 title: Learning Objectives
 ---
 
-This workshop will introduce students to XR development and Robotics using a custom AR app and a two mobile collaborative robotic arms. The prepared sessions build upon each other towards the ability to develop an interactive architectural scenario which incorporates real-time robotic interaction: 
+The course bridges fundamental principles of geometric computing and design and leverage these insights to develop new algorithms and tools for 3D shape generation, simulation, structural design, and fabrication in design and engineering. At the interface of various scientific disciplines such as mathematics, computer science, civil engineering, architecture, and digital fabrication, students are taught innovative computational design solutions for advanced manufacturing and construction at various scales.
 
-* Students will learn the basic concepts of human-robot cooperation
-* Students will learn the basics of assembly information modelling
-* Students will learn specific workflows for authoring AR content for assembly routines
-* Students will learn to author and prototype robotic workflows and simulations 
-* Students will be able to think independently about novel robotic workflow concepts and implement them in small groups 
-* Students will be able to experimentally validate their concepts in a full-scale prototype
+The course covers the following topics:
+* Introduction to the application of Computational Geometry and Computational Mechanics in Structural Design
+* Introduction to the general theory of Fabrication-Aware Design
+* Introduction to a specific selected computational architectural and structural design tool and fabrication technology
+* Introduction to the processing of geometry, data structures, robot programming, and interfaces
+* Domain-specific case studies with a practical design and fabrication task
 
