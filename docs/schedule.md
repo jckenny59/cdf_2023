@@ -23,25 +23,25 @@ Monday-Friday, 8.-12. May
 ### DAY 1, Monday, 8. May
 #### Session 1: 09:00-12:00 (Lidia Atanasova & Frederic Chovghi)
 * Welcome & introduction round 
-* Announce interdisciplinary groups (8 x 3 students)
-* Safety introduction (Andreas Bittner)
 * Seminar topic introduction 
-* Introduction to the computational design workflow + example files
+* First introduction to the computational design workflow + example files
 * Trouble shooting installation
+* Safety introduction (Andreas Bittner)
 
 #### Session 2: 13:00-18:00
 * Theoretical basics
-    * Fabrication-aware design & digital fabrication (Kathrin Dörfler)
+    * Fabrication-aware design & robotic fabrication (Kathrin Dörfler)
     * Structural design & reciprocal frame structures (Pierluigi D'Acunto)
-    * Computational mechanics (Majid Hojjat)
-* First concepts & design explorations
+    * Design optimization (Majid Hojjat)
+* Announce interdisciplinary groups (8 x 3 students)
 
 ### DAY 2, Tuesday, 9. May
 #### Session 3: 09:00-12:00
-* Fabrication demo
-* Design explorations
+* Recap and deep dive to the computational design workflow + example files
+* First concepts & design explorations
 
 #### Session 4: 13:00-18:00
+* Fabrication demo
 * Concept design discussion & feedback session
 * Design explorations
 
