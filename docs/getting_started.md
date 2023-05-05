@@ -54,8 +54,8 @@ Execute the commands below in Anaconda Prompt:
 #### CEM 
 (Windows only)
 
-Download the CEM_180 from [here](https://github.com/computational-structural-design/CEM).
-After the download, copy the folder CEM and the folder NLoptNet (Downloads\CEM-master\CEM_180\CEM_180_Rhino6_GHPlugin) and paste those into your Grasshopper Plugins folder. You can reach the Grasshopper Plugins folder via the Rhino command line by entering "GrasshopperFolders" and selecting "Components".
+Download the CEM_180 from the [CEM repository](https://github.com/computational-structural-design/CEM). After the download copy the folders **CEM** and **NLoptNet** (Downloads\CEM-master\CEM_180\CEM_180_Rhino6_GHPlugin) and paste those into your Grasshopper Plugins folder. 
+You can reach the Grasshopper Plugins folder via the Rhino command line by entering "GrasshopperFolders" and selecting "Components" or in Grasshopper from File > Special Folders > Components Folder.
 
 
 ### 3. Cloning the Course Repository
