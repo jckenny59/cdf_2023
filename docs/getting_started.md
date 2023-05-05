@@ -27,10 +27,6 @@ Execute the commands below in Anaconda Prompt:
     (base) conda create -n cdf compas_fab --yes
     (base) conda activate cdf
 
-#### Mac
-    (base) conda create -n cdf compas_fab python.app --yes
-    (base) conda activate cdf
-    
 
 #### Verify Installation
 
@@ -54,6 +50,12 @@ Execute the commands below in Anaconda Prompt:
     
     (cdf) python -m pip install git+https://github.com/augmentedfabricationlab/ur_fabrication_control@master#egg=ur_fabrication_control
     (cdf) python -m compas_rhino.install -p ur_fabrication_control -v 7.0
+
+#### CEM 
+(Windows only)
+
+Download the CEM_180 from [here](https://github.com/computational-structural-design/CEM).
+After the download, copy the folder CEM and the folder NLoptNet (Downloads\CEM-master\CEM_180\CEM_180_Rhino6_GHPlugin) and paste those into your Grasshopper Plugins folder. You can reach the Grasshopper Plugins folder via the Rhino command line by entering "GrasshopperFolders" and selecting "Components".
 
 
 ### 3. Cloning the Course Repository
