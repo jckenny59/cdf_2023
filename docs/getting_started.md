@@ -51,7 +51,7 @@ Execute the commands below in Anaconda Prompt:
     (cdf) python -m pip install git+https://github.com/augmentedfabricationlab/ur_fabrication_control@master#egg=ur_fabrication_control
     (cdf) python -m compas_rhino.install -p ur_fabrication_control -v 7.0
 
-#### CEM 
+#### CEM - Combinatorial Equilibrium Modelling 
 (Windows only)
 
 Download the CEM_180 from the [CEM repository](https://github.com/computational-structural-design/CEM). After the download copy the folders **CEM** and **NLoptNet** (Downloads\CEM-master\CEM_180\CEM_180_Rhino6_GHPlugin) and paste those into your Grasshopper Plugins folder. 
