@@ -396,48 +396,50 @@ class Assembly(FromToData, FromToJson):
             if intersection != None:
                 return intersection
 
-
-    def static_equilibrium_check(self, support, option_elems, allow_temp_support=True):
+    def calculate_global_equilibrium(self, support, option_elems, radius, allow_temp_support=True):
         """Check if the structure is in equilibrium.
         """
 
         supports = []
+        vol = []
+        cen = []
 
         if allow_temp_support == True:
             s_glob = True
 
-        planes = [Artist(element.frame).draw() for key, element in self.elements()]
-        [plane.Translate(plane.ZAxis*-0.4) for plane in planes]
-        elements_geo = [rg.Cylinder(rg.Circle(plane, 0.01), 0.8) for plane in planes] # built elements as breps
-
-        option_plane = Artist(option_elems[0].frame).draw()
-        option_plane.Translate(option_plane.ZAxis*-0.4)
-        elements_geo.append(rg.Cylinder(rg.Circle(option_plane, 0.01), 0.8)) # built elements + option robot as breps
-
-        elements_breps = [geo.ToBrep(True, True) for geo in elements_geo]
-        e = elements_breps
-
-        sa = rs.BoundingBox(support) #support area in which the resultant shall lie on
-        sa = rs.AddSrfPt(sa[:4])
-        sa = rs.ExtrudeSurface(rs.MoveObject(sa, (0,0,-0.1)), rs.AddLine((0,0,-0.1), (0,0,0.1)))
+        e = [element.line for key, element in self.elements()]
+        e += [elem_option.line for elem_option in option_elems]
+        # for elem_option in option_elems:
+        #     e.append(elem_option.line)
 
         supports.append(support)
-        supports += e
-
+        supports.extend(e)
         e = supports
 
-        vol = [rs.SurfaceVolume(e[x])[0] for x in range(len(e))] #volume Vectors; Material weight is considered as constant
-        cen = [rs.SurfaceVolumeCentroid(e[x])[0] for x in range(len(e))]
-        cen = [(cen[x][0], cen[x][1], 0) for x in range(len(cen))] #planar Center-nodes
+        for i, element in enumerate(e):
+            if i == 0:
+                #print element
+                voll = rs.SurfaceVolume(element)[0] # volume Vector of base; Material weight is considered as constant; Input as Brep
+                cenl = rs.SurfaceVolumeCentroid(element)[0] # center node
+                cenl = (cenl[0], cenl[1], 0) # planar Center-nodes
+            else:
+                voll = element.length *  math.pi * radius**2 # volume Vector for Rods; Material weight is considered as constant; Input as Line
+                cenl = (element.midpoint.x, element.midpoint.y, element.midpoint.z) # center nodes
+                cenl = (cenl[0], cenl[1], 0) # planar Center-nodes
+            vol.append(voll)
+            cen.append(cenl)
 
+
+        # Global Equlibrium
         res_pos_x = 0
         res_pos_y = 0
 
         static_equilibrium = False
 
         for i in range(len(e)):
-            m_x = cen[i][0] * vol [i]
-            m_y = cen[i][1] * vol [i]
+            #print cen
+            m_x = cen[i][0] * vol[i]
+            m_y = cen[i][1] * vol[i]
 
             res_pos_x += m_x
             res_pos_y += m_y
@@ -446,7 +448,7 @@ class Assembly(FromToData, FromToJson):
             res_pos_y_loc = res_pos_y / sum(vol[:(i+1)]) #moment in y-dir
 
             res_loc = rs.AddLine((res_pos_x_loc, res_pos_y_loc, 0), (res_pos_x_loc, res_pos_y_loc, sum(vol[:(i+1)]))) #Resultant
-            se_loc = rs.IsPointInSurface(sa, (res_pos_x_loc, res_pos_y_loc, 0))
+            se_loc = rg.Brep.IsPointInside(supports[0], rg.Point3d(res_pos_x_loc, res_pos_y_loc, 0), 0.001, True)
 
             if s_glob == True and allow_temp_support == False:
                 if i > s_int+1: allow_temp_support = True
@@ -473,6 +475,63 @@ class Assembly(FromToData, FromToJson):
             res = None
 
         return static_equilibrium, res
+
+    def calculate_local_equilibrium(self, cp, sp, l, r):
+
+        if cp and sp:
+            # Variables:
+            # cp = Center Points of the individual elements of one branch
+            # sp = Planar Supports of the branch
+            # l = #Length of the Rods [m]
+            # r = #Radius of the Pipe Elements
+
+
+            #Step 1: Calculate single Resultants
+            vol = l * math.pi * r**2 #Volume Vector for Rods; Material weight is considered as constant
+            cp0 = [(p[0], p[1], 0) for p in cp] #Planar Center Points of the Resultant
+            sp = [(p[0], p[1], 0) for p in sp] #Make Supports planar
+
+
+            #Step 2: Calculate the Resultant for each branch
+            res_pos_loc = []
+            res_pos_x = 0
+            res_pos_y = 0
+
+            for i, cp0l in enumerate(cp0):
+                m_x = cp0l[0] * vol
+                m_y = cp0l[1] * vol
+
+                res_pos_x += m_x #Local Moment in x-dir
+                res_pos_y += m_y #Local Moment in y-dir
+
+                res_pos_x_loc = res_pos_x / (vol*(i+1)) #Position of Resultant in x-dir
+                res_pos_y_loc = res_pos_y / (vol*(i+1)) #Position of Resultant in y-dir
+
+                rp = rs.AddPoint(res_pos_x_loc, res_pos_y_loc, 0)
+
+                #Lever Arm for a single Branch
+                if len(sp) == 1:
+                    la = rs.Distance(rp, sp)
+
+                #Lever Arm for two Branches
+                if len(sp) == 2:
+                    l = rs.AddLine(sp[0], sp[1])
+                    la = rs.Distance(rs.EvaluateCurve(l, rs.CurveClosestPoint(l, rp)), rp)
+
+                #Lever Arm for multiple Branches
+                if len(sp) > 2:
+                    sp.append(sp[0])
+                    l = rs.AddPolyline(sp)
+
+                    check = rs.PointInPlanarClosedCurve(rp, l)
+                    if check == 1 or check == 2: la = 0
+                    if check == 0: la = rs.Distance(rs.EvaluateCurve(l, rs.CurveClosestPoint(l, rp)), rp)
+
+        else:
+            la = 'No Input'
+            rp = 'No Input'
+
+        return([la, rp])
 
 
     def close_rf_unit(self, current_key, flip, angle, shift_value, on_ground=False, added_frame_id=None, frame_est=None):
@@ -578,7 +637,7 @@ class Assembly(FromToData, FromToJson):
             else:
                 pass
 
-    def distance_to_input_geo(self, key, angle, input_geo):
+    def distance_to_target_geo(self, key, angle, input_geo):
 
         conn_frame = self.element(key).connectors(state='open')[0]
         elem_frame = self.element(key).frame
@@ -595,7 +654,7 @@ class Assembly(FromToData, FromToJson):
 
         return distance, vector
 
-    def orientation_to_input_geo(self, key, angle, input_geo):
+    def orientation_to_target_geo(self, key, angle, input_geo):
 
         conn_frame = self.element(key).connectors(state='open')[0]
         elem_frame = self.element(key).frame
