@@ -13,5 +13,4 @@ title: Materials
 <br />
 [Structural Design](https://github.com/augmentedfabricationlab/cdf_2023/blob/master/docs/pdfs/230505_CDF_StructuralDesign_PDAcunto.pdf)
 <br />
-[Reciprocal Frame Intro](https://github.com/augmentedfabricationlab/cdf_2023/blob/master/docs/pdfs/230508_Reciprocal_Frame_Intro_FChovghi.pdf)
-
+[CEM Lecture](https://github.com/augmentedfabricationlab/cdf_2023/blob/master/docs/pdfs/221208_TE_CEM_Lecture_FChovghi.pdf)
