@@ -399,7 +399,7 @@ class Assembly(FromToData, FromToJson):
     def calculate_global_equilibrium(self, support, option_elems, radius, allow_temp_support=True):
         """Check if the structure is in equilibrium.
         """
-
+        static_equilibrium = []
         supports = []
         vol = []
         cen = []
@@ -409,8 +409,6 @@ class Assembly(FromToData, FromToJson):
 
         e = [element.line for key, element in self.elements()]
         e += [elem_option.line for elem_option in option_elems]
-        # for elem_option in option_elems:
-        #     e.append(elem_option.line)
 
         supports.append(support)
         supports.extend(e)
@@ -434,10 +432,7 @@ class Assembly(FromToData, FromToJson):
         res_pos_x = 0
         res_pos_y = 0
 
-        static_equilibrium = False
-
         for i in range(len(e)):
-            #print cen
             m_x = cen[i][0] * vol[i]
             m_y = cen[i][1] * vol[i]
 
@@ -448,33 +443,37 @@ class Assembly(FromToData, FromToJson):
             res_pos_y_loc = res_pos_y / sum(vol[:(i+1)]) #moment in y-dir
 
             res_loc = rs.AddLine((res_pos_x_loc, res_pos_y_loc, 0), (res_pos_x_loc, res_pos_y_loc, sum(vol[:(i+1)]))) #Resultant
-            se_loc = rg.Brep.IsPointInside(supports[0], rg.Point3d(res_pos_x_loc, res_pos_y_loc, 0), 0.001, True)
+            se_loc = rg.Brep.IsPointInside(supports[0], rg.Point3d(res_pos_x_loc, res_pos_y_loc, 0), 0.001, False)
 
             if s_glob == True and allow_temp_support == False:
-                if i > s_int+1: allow_temp_support = True
+                if i > s_int+1:
+                    allow_temp_support = True
 
-            if se_loc != True: # Structure is in Equilibrium
+            if se_loc == True: # Structure is in Equilibrium
                 static_equilibrium = True
+                msg = "Structure is in Equilibrium."
 
-            if se_loc != False and allow_temp_support == False: # Structure is NOT in Equilibrium
+            if se_loc == False and allow_temp_support == False: # Structure is NOT in Equilibrium
                 static_equilibrium = False
+                msg = "Structure is NOT in Equilibrium."
 
-            if se_loc != False and allow_temp_support == True: # Structure is only in Equilibrium if Robot holds the last Element
+            if se_loc == False and allow_temp_support == True: # Structure is only in Equilibrium if Robot holds the last Element
                 static_equilibrium = True
                 allow_temp_support = False
                 s_int = i
+                msg = "Structure is only in Equilibrium if Robot holds the last Element."
 
             res = res_loc
 
-            if static_equilibrium == False:
-                break
-            else:
-                continue
+    #        if static_equilibrium == False:
+    #            break
+    #        else:
+    #            continue
 
-        if res == False:
-            res = None
+    #    if res == False:
+    #        res = None
 
-        return static_equilibrium, res
+        return static_equilibrium, res, msg
 
     def calculate_local_equilibrium(self, cp, sp, l, r):
 
@@ -639,39 +638,42 @@ class Assembly(FromToData, FromToJson):
 
     def distance_to_target_geo(self, key, angle, input_geo):
 
-        conn_frame = self.element(key).connectors(state='open')[0]
+        open_connector_frame = self.element(key).connectors(state='open')[0]
         elem_frame = self.element(key).frame
 
         R = Rotation.from_axis_and_angle(elem_frame.xaxis, math.radians(angle), elem_frame.point)
 
-        conn_frame_copy = conn_frame.transformed(R)
-        conn_plane = Artist(conn_frame_copy).draw()
+        open_connector_frame_copy = open_connector_frame.transformed(R)
+        open_connector_plane = Artist(open_connector_frame_copy).draw()
 
-        closest_point = input_geo.ClosestPoint(conn_plane.Origin)
-        distance = closest_point.DistanceTo(conn_plane.Origin)
+        closest_point = input_geo.ClosestPoint(open_connector_plane.Origin)
+        distance = closest_point.DistanceTo(open_connector_plane.Origin)
 
-        vector = rg.Vector3d(closest_point) - rg.Vector3d(conn_plane.Origin)
+        vector = rg.Vector3d(closest_point) - rg.Vector3d(open_connector_plane.Origin)
 
         return distance, vector
 
     def orientation_to_target_geo(self, key, angle, input_geo):
 
-        conn_frame = self.element(key).connectors(state='open')[0]
+        open_connector_frame = self.element(key).connectors(state='open')[0]
         elem_frame = self.element(key).frame
 
         R = Rotation.from_axis_and_angle(elem_frame.xaxis, math.radians(angle), elem_frame.point)
 
-        conn_frame_copy = conn_frame.transformed(R)
-        conn_plane = Artist(conn_frame_copy).draw()
+        open_connector_frame_copy = open_connector_frame.transformed(R)
+        open_connector_plane = Artist(open_connector_frame_copy).draw()
 
-        closest_point = input_geo.ClosestPoint(conn_plane.Origin)
+        closest_point = input_geo.ClosestPoint(open_connector_plane.Origin)
 
-        vector = rg.Vector3d(closest_point) - rg.Vector3d(conn_plane.Origin)
+        vector = Vector(closest_point.X, closest_point.Y, closest_point.Z) - open_connector_frame_copy.point
 
         #angle = 180 - math.degrees(conn_frame_copy.zaxis.angle(vector))
-        cross_product = conn_frame_copy.zaxis.cross(vector)
+        v1 = open_connector_frame_copy.zaxis
+        v1.unitize()
+        vector.unitize()
+        dot_product = v1.dot(vector)
 
-        return cross_product.length**-1, vector
+        return abs(dot_product)*100, vector
 
     def all_options_elements(self, flip, angle):
         """Returns a list of elements.
