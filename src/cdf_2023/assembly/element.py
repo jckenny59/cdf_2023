@@ -8,13 +8,14 @@ import math
 from compas.datastructures import Mesh
 from compas.datastructures import mesh_transform
 
-from compas.geometry import Frame, Vector, Line, Cone, Point
+from compas.geometry import Frame, Vector, Line, Point
 from compas.geometry import Box
 from compas.geometry import Transformation, Translation, Rotation
 from compas.geometry import cross_vectors
 from compas.geometry import normalize_vector
 from compas.geometry import centroid_polyhedron
 from compas.geometry import volume_polyhedron
+from compas_rhino.geometry import RhinoNurbsSurface
 from compas.datastructures import Mesh, mesh_transform
 
 
@@ -437,9 +438,9 @@ class Element(object):
         if 'connector_frame_2' in data:
             self.connector_frame_2 = Frame.from_data(data['connector_frame_2'])
         if 'connector_range_1' in data:
-            self.connector_range_1 = Cone.from_data(data['connector_range_1'])
+            self.connector_range_1 = RhinoNurbsSurface.from_data(data['connector_range_1'])
         if 'connector_range_2' in data:
-            self.connector_range_2 = Cone.from_data(data['connector_range_2'])
+            self.connector_range_2 = RhinoNurbsSurface.from_data(data['connector_range_2'])
         if 'connector_1_state' in data:
             self.connector_1_state = data['connector_1_state']
         if 'connector_2_state' in data:
