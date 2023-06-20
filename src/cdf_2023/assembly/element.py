@@ -80,6 +80,7 @@ class Element(object):
         self._source = None
         self._mesh = None
 
+        self.RCF = None
         self.trajectory = None
         self.path = []
 
@@ -415,6 +416,9 @@ class Element(object):
         if self._base_frame:
             d['_base_frame'] = self._base_frame.to_data()
 
+        if self.RCF:
+            d['RCF'] = self.RCF.to_data()
+
         return d
 
     @data.setter
@@ -455,6 +459,8 @@ class Element(object):
             self._type = data['_type']
         if '_base_frame' in data:
             self._base_frame = Frame.from_data(data['_base_frame'])
+        if 'RCF' in data:
+            self.RCF = Frame.from_data(data['RCF'])
 
     def to_data(self):
         """Returns the data dictionary that represents the element.
@@ -511,6 +517,8 @@ class Element(object):
             [f.transform(transformation) for f in self.connector_2_joints]
         if self._base_frame:
             self._base_frame.transform(transformation)
+        if self.RCF:
+            self.RCF.transform(transformation)
         if self._source:
             if type(self._source) == Mesh:
                 mesh_transform(self._source, transformation)  # it would be really good to have Mesh.transform()
@@ -575,6 +583,8 @@ class Element(object):
             elem._type = self._type
         if self._base_frame:
             elem._base_frame = self._base_frame.copy()
+        if self.RCF:
+            elem.RCF = self.RCF.copy()
         if self._source:
             elem._source = self._source.copy()
         if self._mesh:

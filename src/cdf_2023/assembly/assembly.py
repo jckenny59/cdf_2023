@@ -77,6 +77,7 @@ class Assembly(FromToData, FromToJson):
         self.network.default_node_attributes.update({
             'is_planned': False,
             'is_built': False,
+            'placed_by': None,
             'is_support': False,
             'is_held_by_robot': False,
             'has_open_connector':False,
@@ -184,7 +185,7 @@ class Assembly(FromToData, FromToJson):
         return key
 
 
-    def add_rf_unit_element(self, current_key, flip='AA', angle=0, shift_value=0, placed_by='human', on_ground=False, unit_index=0, frame_id=None, frame_est=None):
+    def add_rf_unit_element(self, current_key, flip='AA', angle=0, shift_value=0, placed_by='human', RCF = None, on_ground=False, unit_index=0, frame_id=None, frame_est=None):
         """Add an element to the assembly.
         """
         radius = self.globals['rod_radius']
@@ -237,7 +238,7 @@ class Assembly(FromToData, FromToJson):
         # Transform the new element
         new_elem.transform(R2*T3)
 
-        self.add_element(new_elem, placed_by=placed_by, on_ground=on_ground, frame_id=frame_id, frame_est=frame_est, is_built=True)
+        self.add_element(new_elem, placed_by=placed_by, RCF=RCF, on_ground=on_ground, frame_id=frame_id, frame_est=frame_est, is_built=True)
 
         # Add adges
         if unit_index == 0:
@@ -533,7 +534,7 @@ class Assembly(FromToData, FromToJson):
         return([la, rp])
 
 
-    def close_rf_unit(self, current_key, flip, angle, shift_value, on_ground=False, added_frame_id=None, frame_est=None):
+    def close_rf_unit(self, current_key, flip, angle, shift_value, RCF=None, on_ground=False, added_frame_id=None, frame_est=None):
         """Add a module to the assembly.
         """
 
@@ -543,7 +544,7 @@ class Assembly(FromToData, FromToJson):
             if i == 0:
                 placed_by = 'robot'
                 frame_id = None
-                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=None)
+                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=None)
                 keys_robot += list(self.network.nodes_where({'element': my_new_elem}))
             else:
                 placed_by = 'human'
