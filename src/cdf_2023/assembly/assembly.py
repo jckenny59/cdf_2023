@@ -16,6 +16,7 @@ from compas.datastructures import Network, mesh_offset
 from compas.artists import Artist
 from compas.colors import Color
 from compas.topology import connected_components
+from compas_rhino.conversions import line_to_rhino_curve, point_to_compas, point_to_rhino
 
 import rhinoscriptsyntax as rs
 import Rhino.Geometry as rg
@@ -424,6 +425,7 @@ class Assembly(FromToData, FromToJson):
 
     def get_rot_angle(self, step, rot_axis, rot_point, elem_line1, elem_line2, rot_dir, epsilon):
 
+        rot_angle = 0
         init_step = math.radians(step)
         alpha = init_step
 
@@ -431,11 +433,9 @@ class Assembly(FromToData, FromToJson):
             alpha = -alpha
 
         i = 0
-        max_i = 5
+        max_i = 25
 
         d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
-
-        angle = 0
 
         while d < self.globals['rod_radius'] * 2.0:
             i += 1
@@ -443,7 +443,7 @@ class Assembly(FromToData, FromToJson):
             if i >= max_i:
                 break
 
-            angle += alpha
+            rot_angle += alpha
 
             # rotate the cylinder axis by alpha
             R = rg.Transform.Rotation(alpha, rot_axis, rot_point)
@@ -478,9 +478,49 @@ class Assembly(FromToData, FromToJson):
             R = rg.Transform.Rotation(alpha, rot_axis, rot_point)
             elem_line1.Transform(R)
 
-            angle += alpha
+            rot_angle += alpha
 
-        return math.degrees(angle)
+        return math.degrees(rot_angle)
+
+    def add_third_element(self, elem, selected_keys_pair, option_elem, point1, point2, epsilon):
+
+        option_elem_line_rg = line_to_rhino_curve(option_elem.line)
+        open_connector_line_rg = line_to_rhino_curve(self.element(selected_keys_pair[1]).line)
+
+        param1 = option_elem_line_rg.NormalizedLengthParameter(point1)
+        param2 = open_connector_line_rg.NormalizedLengthParameter(point2)
+
+        start_point = option_elem_line_rg.PointAt(param1[1])
+        end_point = open_connector_line_rg.PointAt(param2[1])
+
+        elem_x_vector = rg.Vector3d(end_point - start_point)
+        elem_y_vector = rg.Vector3d(elem_x_vector.Y,elem_x_vector.X,elem_x_vector.Z)
+
+        elem_frame = Frame(point_to_compas(start_point), Vector(elem_x_vector.X, elem_x_vector.Y, elem_x_vector.Z), Vector(elem_y_vector.X, elem_y_vector.Y, elem_y_vector.Z))
+
+        T1 = Transformation.from_frame_to_frame(Frame.worldXY(), elem_frame)
+        new_elem = elem.transformed(T1)
+
+        rot_dir1 = 0
+        rot_dir2 = 1
+        step1 = 0.3
+        step2 = 0.3
+
+        rot_axis1 = rg.Vector3d(option_elem_line_rg.PointAtStart- option_elem_line_rg.PointAtEnd)
+        rot_axis2 = rg.Vector3d(open_connector_line_rg.PointAtStart - open_connector_line_rg.PointAtEnd)
+        rot_point1 = point_to_rhino(option_elem.frame.point)
+        rot_point2 = point_to_rhino(self.element(selected_keys_pair[1]).frame.point)
+        new_elem_line = line_to_rhino_curve(new_elem.line)
+
+        tol_angle1 = self.get_rot_angle(step1, rot_axis1, rot_point1, new_elem_line, open_connector_line_rg, rot_dir1, epsilon)
+        tol_angle2 = self.get_rot_angle(step2, rot_axis2, rot_point2, new_elem_line, option_elem_line_rg, rot_dir2, epsilon)
+
+        R1 = Rotation.from_axis_and_angle(option_elem.frame.xaxis, math.radians(tol_angle1), option_elem.frame.point)
+        R2 = Rotation.from_axis_and_angle(self.element(selected_keys_pair[1]).frame.xaxis, math.radians(tol_angle2), self.element(selected_keys_pair[1]).frame.point)
+        new_elem.transform(R1)
+        new_elem.transform(R2)
+
+        return new_elem
 
     def calculate_global_equilibrium(self, support, option_elems, radius, allow_temp_support=True):
         """Check if the structure is in equilibrium.
