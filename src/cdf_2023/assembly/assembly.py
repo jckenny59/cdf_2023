@@ -11,10 +11,11 @@ from copy import deepcopy
 from compas.geometry import Frame, Vector, Plane
 from compas.geometry import Transformation, Translation, Rotation
 from compas.geometry import intersection_line_plane
-from compas.geometry import distance_point_point, distance_line_line
+from compas.geometry import distance_point_point, distance_line_line, distance_point_line
 from compas.datastructures import Network, mesh_offset
 from compas.artists import Artist
 from compas.colors import Color
+from compas.topology import connected_components
 
 import rhinoscriptsyntax as rs
 import Rhino.Geometry as rg
@@ -28,6 +29,7 @@ from .utilities import element_to_INCON
 from .utilities import tag_to_INCON
 
 __all__ = ['Assembly']
+
 
 
 class Assembly(FromToData, FromToJson):
@@ -185,7 +187,19 @@ class Assembly(FromToData, FromToJson):
         return key
 
 
-    def add_rf_unit_element(self, current_key, flip='AA', angle=0, shift_value=0, placed_by='human', RCF = None, on_ground=False, unit_index=0, frame_id=None, frame_est=None):
+    def add_rf_unit_element(
+            self,
+            current_key,
+            flip='AA',
+            angle=0,
+            shift_value=0,
+            placed_by='human',
+            RCF = None,
+            on_ground=False,
+            unit_index=0,
+            frame_id=None,
+            frame_est=None
+        ):
         """Add an element to the assembly.
         """
         radius = self.globals['rod_radius']
@@ -230,7 +244,7 @@ class Assembly(FromToData, FromToJson):
         # Define a desired rotation around the parent element
         T_point = Translation.from_vector(current_elem.frame.xaxis)
         new_point = current_elem.frame.point.transformed(T_point)
-        R2 = Rotation.from_axis_and_angle(current_elem.frame.xaxis, math.radians(angle),new_point)
+        R2 = Rotation.from_axis_and_angle(current_elem.frame.xaxis, math.radians(angle), new_point)
 
         # Define a desired shift value along the parent element
         T3 = Translation.from_vector(current_elem.frame.xaxis*shift_value)
@@ -238,7 +252,15 @@ class Assembly(FromToData, FromToJson):
         # Transform the new element
         new_elem.transform(R2*T3)
 
-        self.add_element(new_elem, placed_by=placed_by, RCF=RCF, on_ground=on_ground, frame_id=frame_id, frame_est=frame_est, is_built=True)
+        self.add_element(new_elem,
+                         placed_by=placed_by,
+                         RCF=RCF,
+                         on_ground=on_ground,
+                         frame_id=frame_id,
+                         frame_est=frame_est,
+                         is_planned=True,
+                         is_built=False,
+                         is_support=False)
 
         # Add adges
         if unit_index == 0:
@@ -368,6 +390,9 @@ class Assembly(FromToData, FromToJson):
         """
         return self.network.edges(data)
 
+    def shortest_distance_between_two_lines(self, line1, line2):
+        a, b, d = gh.CurveProximity(line1, line2)
+        return d
 
     def collision_check(self, option_elems, tolerance):
         """Check for collisions with previously built elements.
@@ -377,12 +402,12 @@ class Assembly(FromToData, FromToJson):
         results = []
 
         for key, elem in self.elements():
-            a_line = Artist(elem.line).draw()
+            line1 = Artist(elem.line).draw()
             for option_elem in option_elems:
-                b_line = Artist(option_elem.line).draw()
+                line2 = Artist(option_elem.line).draw()
                 #results.append(True if distance_line_line(elem.line, option_elem.line, tol = 0.001) < assembly.globals['rod_radius']*2. + tolerance else False)
-                point_a, point_b, distance = gh.CurveProximity(a_line, b_line)
-                results.append(True if distance < (self.globals['rod_radius']*2. + tolerance) else False)
+                distance = self.shortest_distance_between_two_lines(line1, line2)
+                results.append(True if distance < (self.globals['rod_radius'] * 2. + tolerance) else False)
             collision = True if True in results else False
         return collision
 
@@ -396,6 +421,66 @@ class Assembly(FromToData, FromToJson):
             intersection = intersection_line_plane(option.line, ground_plane)
             if intersection != None:
                 return intersection
+
+    def get_rot_angle(self, step, rot_axis, rot_point, elem_line1, elem_line2, rot_dir, epsilon):
+
+        init_step = math.radians(step)
+        alpha = init_step
+
+        if rot_dir == 0:
+            alpha = -alpha
+
+        i = 0
+        max_i = 5
+
+        d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
+
+        angle = 0
+
+        while d < self.globals['rod_radius'] * 2.0:
+            i += 1
+
+            if i >= max_i:
+                break
+
+            angle += alpha
+
+            # rotate the cylinder axis by alpha
+            R = rg.Transform.Rotation(alpha, rot_axis, rot_point)
+            elem_line1.Transform(R)
+
+        d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
+
+        i = 0
+        max_i= 50
+        d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
+
+        while abs(d - self.globals['rod_radius'] * 2.0) > epsilon:
+            i += 1
+
+            if i >= max_i:
+                break
+
+            # half the rotation step and ensure it is > 0
+            alpha = abs(0.5 * alpha)
+
+            if rot_dir == 0:
+                alpha = -alpha   # invert direction for counter clockwise rotation
+
+            # test distance
+            d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
+            if d > self.globals['rod_radius'] * 2.0:
+                alpha = -alpha   # distance too large --> rotate back
+            else:
+                alpha = alpha   # distance too small --> rotate in same direction
+
+            # rotate axis
+            R = rg.Transform.Rotation(alpha, rot_axis, rot_point)
+            elem_line1.Transform(R)
+
+            angle += alpha
+
+        return math.degrees(angle)
 
     def calculate_global_equilibrium(self, support, option_elems, radius, allow_temp_support=True):
         """Check if the structure is in equilibrium.
@@ -476,7 +561,23 @@ class Assembly(FromToData, FromToJson):
 
         return static_equilibrium, res, msg
 
-    def calculate_local_equilibrium(self, cp, sp, l, r):
+    def calculate_local_equilibrium_in_a_branch(self, cp, sp, l, r):
+        """
+        Calculates the local static Equilibrium condition.
+
+        Parameters
+        ----------
+        cp : point
+            The mid points of the elements.
+
+        Returns
+        -------
+        la: float
+            The lever arm of the branch [m].
+        rp: point
+            The position of the resultant z-vector [point].
+
+        """
 
         if cp and sp:
             # Variables:
@@ -486,14 +587,13 @@ class Assembly(FromToData, FromToJson):
             # r = #Radius of the Pipe Elements
 
 
-            #Step 1: Calculate single Resultants
+            # Step 1: Calculate single Resultants
             vol = l * math.pi * r**2 #Volume Vector for Rods; Material weight is considered as constant
             cp0 = [(p[0], p[1], 0) for p in cp] #Planar Center Points of the Resultant
             sp = [(p[0], p[1], 0) for p in sp] #Make Supports planar
 
 
-            #Step 2: Calculate the Resultant for each branch
-            res_pos_loc = []
+            # Step 2: Calculate the Resultant for each element
             res_pos_x = 0
             res_pos_y = 0
 
@@ -501,24 +601,24 @@ class Assembly(FromToData, FromToJson):
                 m_x = cp0l[0] * vol
                 m_y = cp0l[1] * vol
 
-                res_pos_x += m_x #Local Moment in x-dir
-                res_pos_y += m_y #Local Moment in y-dir
+                res_pos_x += m_x # Local Moment in x-dir
+                res_pos_y += m_y # Local Moment in y-dir
 
-                res_pos_x_loc = res_pos_x / (vol*(i+1)) #Position of Resultant in x-dir
-                res_pos_y_loc = res_pos_y / (vol*(i+1)) #Position of Resultant in y-dir
+                res_pos_x_loc = res_pos_x / (vol*(i+1)) # Position of Resultant in x-dir
+                res_pos_y_loc = res_pos_y / (vol*(i+1)) # Position of Resultant in y-dir
 
                 rp = rs.AddPoint(res_pos_x_loc, res_pos_y_loc, 0)
 
-                #Lever Arm for a single Branch
+                # Lever Arm for a single support
                 if len(sp) == 1:
                     la = rs.Distance(rp, sp)
 
-                #Lever Arm for two Branches
+                # Lever Arm for two supports
                 if len(sp) == 2:
                     l = rs.AddLine(sp[0], sp[1])
                     la = rs.Distance(rs.EvaluateCurve(l, rs.CurveClosestPoint(l, rp)), rp)
 
-                #Lever Arm for multiple Branches
+                # Lever Arm for multiple supports
                 if len(sp) > 2:
                     sp.append(sp[0])
                     l = rs.AddPolyline(sp)
@@ -533,6 +633,35 @@ class Assembly(FromToData, FromToJson):
 
         return([la, rp])
 
+    def calculate_local_equilibrium_in_all_branches(self, current_key, elem_options):
+
+        # Identify the connected elements (branches) in the assembly.
+        branches = connected_components(self.network.adjacency)
+
+        stability_feedback = []
+        lever_arm_branches = []
+        resultant_branches = []
+
+        for i, branch in enumerate(branches):
+
+            # The mid points of the elements in one branch
+            cp = [Artist(self.element(bkey).line.midpoint).draw() for bkey in branch]
+
+            # Add option to branch
+            if current_key in branch:
+                cp += [Artist(elem_options.line.midpoint).draw() for elem_options in elem_options]
+            sp = [Artist(self.element(branch[0]).line.end).draw()]
+
+            # calculate local equilibrium (level arm) and the resultant point of the selected option elements
+            lever_arm, resultant_point = self.calculate_local_equilibrium_in_a_branch(cp, sp, self.globals['rod_length'], self.globals['rod_radius'])
+
+            resultant_point = rs.coerce3dpoint(resultant_point)
+            resultant_line = rg.Line(resultant_point, rg.Vector3d.ZAxis, 0.1)
+
+            lever_arm_branches.append(lever_arm[0])
+            resultant_branches.append(resultant_line)
+
+        return lever_arm_branches, resultant_branches
 
     def close_rf_unit(self, current_key, flip, angle, shift_value, RCF=None, on_ground=False, added_frame_id=None, frame_est=None):
         """Add a module to the assembly.
@@ -556,6 +685,51 @@ class Assembly(FromToData, FromToJson):
 
         return keys_dict
 
+    def join_branches(self, keys_pair, flip, angle, shift_value, new_elem, RCF=None, on_ground=False, added_frame_id=None, frame_est=None):
+        """Join to branches by adding three elements.
+        """
+
+        keys_robot = []
+
+        for i in range(3):
+            if i == 0:
+                placed_by = 'robot'
+                frame_id = None
+                my_new_elem = self.add_rf_unit_element(keys_pair[0], flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=None)
+                keys_robot += list(self.network.nodes_where({'element': my_new_elem}))
+            if i == 1:
+                placed_by = 'human'
+                frame_id = None
+                my_new_elem = self.add_rf_unit_element(keys_pair[0], flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=None)
+                keys_human = list((self.network.nodes_where({'element': my_new_elem})))
+            if i == 2:
+                placed_by = 'human'
+                frame_id = None
+                my_new_elem = self.add_element(new_elem, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=2, frame_id=frame_id, frame_est=None)
+                keys_human = list((self.network.nodes_where({'element': my_new_elem})))
+
+        N = self.network.number_of_nodes()
+
+        d1 = distance_point_point(new_elem.line.end, self.element(keys_pair[1]).frame.point)
+        d2 = distance_point_point(new_elem.line.start, self.element(keys_pair[1]).frame.point)
+
+        if d1 < d2:
+            self.element(N-1).connector_1_state = False
+        else:
+            self.element(N-1).connector_2_state = False
+
+        self.element(N-2).connector_1_state = False
+        self.element(N-2).connector_2_state = False
+        self.element(keys_pair[1]).connector_1_state = False
+        self.element(keys_pair[1]).connector_2_state = False
+
+        self.network.add_edge(N-2, N-1, edge_to='neighbour')
+        self.network.add_edge(N-2, keys_pair[1], edge_to='neighbour')
+        self.network.add_edge(N-1, keys_pair[1], edge_to='neighbour')
+
+        keys_dict = {'keys_human': keys_human, 'keys_robot':keys_robot}
+
+        return keys_dict, d1,d2
 
     def parent_key(self, point, within_dist):
         """Return the parent key of a tracked object.
@@ -573,6 +747,7 @@ class Assembly(FromToData, FromToJson):
 
 
     def update_connectors_states(self, current_key, flip, my_new_elem, unit_index):
+
 
         key_index = self.network.key_index()
         current_elem = self.network.node[current_key]['element']
@@ -715,7 +890,8 @@ class Assembly(FromToData, FromToJson):
 
         """
         for key, element in self.elements():
-            yield key, element.connectors(state)
+            if self.element(key).connectors(state):
+                yield key, element.connectors(state)
 
         # keys = [key for key, element in self.elements()]
         # return [(key, self.element(key).connectors(state)) for key in keys]

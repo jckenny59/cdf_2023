@@ -675,9 +675,9 @@ class Element(object):
             e1 = self.transformed(R1)
             e2 = self.transformed(R2)
 
-            T_point = Translation.from_vector(self.frame.xaxis)
-            new_point = self.frame.point.transformed(T_point)
-            R3 = Rotation.from_axis_and_angle(self.frame.xaxis, math.radians(angle),new_point)
+            # T_point = Translation.from_vector(self.frame.xaxis)
+            # new_point = self.frame.point.transformed(T_point)
+            R3 = Rotation.from_axis_and_angle(self.frame.xaxis, math.radians(angle),self.frame.point)
 
             T1 = Translation.from_vector(-e1.frame.xaxis*a*((length-rf_unit_radius+rf_unit_offset)/2.))
             T2 = Translation.from_vector(-e2.frame.xaxis*b*((length-rf_unit_radius+rf_unit_offset)/2.))
