@@ -424,6 +424,10 @@ class Assembly(FromToData, FromToJson):
                 return intersection
 
     def get_rot_angle(self, step, rot_axis, rot_point, elem_line1, elem_line2, rot_dir, epsilon):
+        """
+        elem_line1: element to rotate
+        elem_line2: element to attach to
+        """
 
         rot_angle = 0
         init_step = math.radians(step)
@@ -449,7 +453,7 @@ class Assembly(FromToData, FromToJson):
             R = rg.Transform.Rotation(alpha, rot_axis, rot_point)
             elem_line1.Transform(R)
 
-        d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
+            d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
 
         i = 0
         max_i= 50
@@ -482,41 +486,48 @@ class Assembly(FromToData, FromToJson):
 
         return math.degrees(rot_angle)
 
-    def add_third_element(self, elem, selected_keys_pair, option_elem, point1, point2, epsilon):
+    def add_third_element(self, elem, elem1, elem2, point1, point2, shift_value, epsilon):
+        """
+        elem1: open connector
+        elem2: option elem
+        """
 
-        option_elem_line_rg = line_to_rhino_curve(option_elem.line)
-        open_connector_line_rg = line_to_rhino_curve(self.element(selected_keys_pair[1]).line)
+        elem1_line_rg = line_to_rhino_curve(elem1.line)
+        elem2_line_rg = line_to_rhino_curve(elem2.line)
 
-        param1 = option_elem_line_rg.NormalizedLengthParameter(point1)
-        param2 = open_connector_line_rg.NormalizedLengthParameter(point2)
+        param1 = elem2_line_rg.NormalizedLengthParameter(point1)
+        param2 = elem1_line_rg.NormalizedLengthParameter(point2)
 
-        start_point = option_elem_line_rg.PointAt(param1[1])
-        end_point = open_connector_line_rg.PointAt(param2[1])
+        start_point = elem1_line_rg.PointAt(param1[1])
+        end_point = elem2_line_rg.PointAt(param2[1])
 
         elem_x_vector = rg.Vector3d(end_point - start_point)
-        elem_y_vector = rg.Vector3d(elem_x_vector.Y,elem_x_vector.X,elem_x_vector.Z)
+        elem_y_vector = elem_x_vector.Clone()
+        elem_y_vector.Rotate(math.radians(90), rg.Vector3d.XAxis)
 
         elem_frame = Frame(point_to_compas(start_point), Vector(elem_x_vector.X, elem_x_vector.Y, elem_x_vector.Z), Vector(elem_y_vector.X, elem_y_vector.Y, elem_y_vector.Z))
 
         T1 = Transformation.from_frame_to_frame(Frame.worldXY(), elem_frame)
         new_elem = elem.transformed(T1)
+        T2 = Translation.from_vector(elem_frame.xaxis * shift_value)
+        new_elem.transform(T2)
 
         rot_dir1 = 0
         rot_dir2 = 1
         step1 = 0.3
         step2 = 0.3
 
-        rot_axis1 = rg.Vector3d(option_elem_line_rg.PointAtStart- option_elem_line_rg.PointAtEnd)
-        rot_axis2 = rg.Vector3d(open_connector_line_rg.PointAtStart - open_connector_line_rg.PointAtEnd)
-        rot_point1 = point_to_rhino(option_elem.frame.point)
-        rot_point2 = point_to_rhino(self.element(selected_keys_pair[1]).frame.point)
+        rot_axis1 = rg.Vector3d(elem2_line_rg.PointAtStart- elem2_line_rg.PointAtEnd)
+        rot_axis2 = rg.Vector3d(elem1_line_rg.PointAtStart - elem1_line_rg.PointAtEnd)
+        rot_point1 = point_to_rhino(elem2.frame.point)
+        rot_point2 = point_to_rhino(elem1.frame.point)
         new_elem_line = line_to_rhino_curve(new_elem.line)
 
-        tol_angle1 = self.get_rot_angle(step1, rot_axis1, rot_point1, new_elem_line, open_connector_line_rg, rot_dir1, epsilon)
-        tol_angle2 = self.get_rot_angle(step2, rot_axis2, rot_point2, new_elem_line, option_elem_line_rg, rot_dir2, epsilon)
+        tol_angle1 = self.get_rot_angle(step1, rot_axis1, rot_point1, new_elem_line, elem1_line_rg, rot_dir1, epsilon)
+        tol_angle2 = self.get_rot_angle(step2, rot_axis2, rot_point2, new_elem_line, elem2_line_rg, rot_dir2, epsilon)
 
-        R1 = Rotation.from_axis_and_angle(option_elem.frame.xaxis, math.radians(tol_angle1), option_elem.frame.point)
-        R2 = Rotation.from_axis_and_angle(self.element(selected_keys_pair[1]).frame.xaxis, math.radians(tol_angle2), self.element(selected_keys_pair[1]).frame.point)
+        R1 = Rotation.from_axis_and_angle(elem2.frame.xaxis, math.radians(tol_angle1), elem2.frame.point)
+        R2 = Rotation.from_axis_and_angle(elem1.frame.xaxis, math.radians(tol_angle2), elem1.frame.point)
         new_elem.transform(R1)
         new_elem.transform(R2)
 
@@ -718,7 +729,7 @@ class Assembly(FromToData, FromToJson):
             else:
                 placed_by = 'human'
                 frame_id = added_frame_id
-                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=frame_est)
+                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=frame_est)
                 keys_human = list((self.network.nodes_where({'element': my_new_elem})))
 
         keys_dict = {'keys_human': keys_human, 'keys_robot':keys_robot}

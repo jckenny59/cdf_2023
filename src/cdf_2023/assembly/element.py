@@ -690,6 +690,29 @@ class Element(object):
             option_elements.append(e1)
             option_elements.append(e2)
 
+        # if current_connector_frame != None:
+        #         T = Translation.from_vector(self.frame.xaxis * shift_value)
+        #         R = Rotation.from_axis_and_angle(self.frame.xaxis, math.radians(angle),self.frame.point)
+
+        #         current_connector_frame.transform(T*R)
+
+        #         R1 = Rotation.from_axis_and_angle(current_connector_frame.zaxis, math.radians(120), current_connector_frame.point)
+        #         R2 = Rotation.from_axis_and_angle(current_connector_frame.zaxis, math.radians(240), current_connector_frame.point)
+        #         e1 = self.transformed(R1)
+        #         e2 = self.transformed(R2)
+
+        #         # T_point = Translation.from_vector(self.frame.xaxis)
+        #         # new_point = self.frame.point.transformed(T_point)
+
+        #         T1 = Translation.from_vector(-e1.frame.xaxis*a*((length-rf_unit_radius+rf_unit_offset)/2.))
+        #         T2 = Translation.from_vector(-e2.frame.xaxis*b*((length-rf_unit_radius+rf_unit_offset)/2.))
+
+        #         #e1.transform(T1)
+        #         #e2.transform(T2)
+
+        #         option_elements.append(e1)
+        #         option_elements.append(e2)
+
         return option_elements
 
     def current_option_vectors(self, len):
