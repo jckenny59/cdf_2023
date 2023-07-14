@@ -98,19 +98,5 @@ Time: 09:00-18:00
 * Final discussion
 * Apéro
 
-### Fabrication Workflow:
-1. human localize robot 
-2. human computes trajectory
-3. human triggers pick-and-place routine
-4. robot places an element
-5. human places a joint
-6. human places an element guided by AR app
-7. human places two joints
 
-4 Teams of five (per robot)
-    1 student on pc robot
-    1 student on teach pendant (emergency stop)
-    1 student feeds elements to the robot and places joints
-    1 student uses AR app
-    1 student places and holds element
 
