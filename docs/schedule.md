@@ -90,8 +90,8 @@ Time: 09:00-18:00
 
 ### DAY 1-5
 #### Sessions 2-9
-#### 4 x morning fab session: 9:00-13:30 (Tuesday-Friday)
-#### 4 x afternoon fab session: 13:30-18:00 (Monday-Thursday)
+* 4 x morning fab session: 9:00-13:30 (Tuesday-Friday)
+* 4 x afternoon fab session: 13:30-18:00 (Monday-Thursday)
 
 ### DAY 5, Friday, 28. July
 #### Session 10: 09:30-13:30 
