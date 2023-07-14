@@ -88,11 +88,19 @@ Time: 09:00-18:00
     * Human-robot task distribution and AR interface
 * Students tasks distribution (fabrication, documentation, presentation)
 
-#### 4 x Morning fab session: 9:00-13:30 (Tuesday-Friday)
-#### 4 x Afternoon fab session: 13:30-18:00 (Monday-Thursday)
+#### Session 2: 13:30-18:00 
+* Fabrication
+
+### DAY 1-5
+
+#### 4 x morning fab session: 9:00-13:30 (Tuesday-Friday)
+#### 4 x afternoon fab session: 13:30-18:00 (Monday-Thursday)
 
 ### DAY 5, Friday, 28. July
-#### Session 1: 13:30-18:00 
+#### Session 1: 09:30-13:30 
+* Fabrication
+
+#### Session 2: 13:30-18:00 
 * Clean up
 * Finalisation and presentation preparation
 * Final discussion
