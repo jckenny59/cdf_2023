@@ -67,7 +67,7 @@ Monday-Friday, 8.-12. May
 #### Session 10: 15:00-18:00
 * Final design presentation
     * Finished simulation of the design proposal
-    * Fabrication test of the proposed design (?)
+    * Fabrication test of the proposed design
 * Apéro
 
 ### Part 2 - Computational Fabrication
@@ -79,53 +79,38 @@ Time: 09:00-18:00
 * Welcome
 * Design introduction
     * Overall design
-    * Nodes
+    * Joints
     * Structural analysis
 * Fabrication workflow introduction
     * Assembly sequence
     * Robot localization
     * Robotic path planning
     * Human-robot task distribution and AR interface
-* Students taks distribution
+* Students tasks distribution (fabrication, documentation, presentation)
 
-#### Session 2: 13:00-18:00
-* Theoretical basics
-    * Fabrication-aware design & robotic fabrication (Kathrin Dörfler)
-    * Structural design & reciprocal frame structures (Pierluigi D'Acunto)
-    * Design optimization (Majid Hojjat)
-* Announce interdisciplinary groups (8 x 3 students)
+#### 4 x Morning fab session: 9:00-13:30 (Tuesday-Friday)
+#### 4 x Afternoon fab session: 13:30-18:00 (Monday-Thursday)
 
-### DAY 2, Tuesday, 25. July
-#### Session 3: 09:00-12:00
-* Recap and deep dive to the computational design workflow + example files
-* First concepts & design explorations
-
-#### Session 4: 13:00-18:00
-* Fabrication demo
-* Concept design discussion & feedback session
-* Design explorations
-
-### DAY 3, Wednesday, 10. May
-#### Session 5: 09:00-12:00
-* Design explorations
-
-#### Session 6: 13:00-18:00
-* Design explorations
-
-### DAY 4, Thursday, 11. May
-#### Session 7: 09:00-12:00
-* Concept design presentation & discussion on further design direction
-* Formation of focus groups (2 x design, 2 x structural feedback, 2 x joints, 2 x robotic path planning)
-
-#### Session 8: 13:00-18:00
-* Work session in focus groups
-
-### DAY 5, Friday, 12. May
-#### Session 9: 09:00-12:00
-* Finalizing final proposal in focus groups and merging presentations
-
-#### Session 10: 15:00-18:00
-* Final design presentation
-    * Finished simulation of the design proposal
-    * Fabrication test of the proposed design (?)
+### DAY 5, Friday, 28. July
+#### Session 1: 13:30-18:00 
+* Clean up
+* Finalisation and presentation preparation
+* Final discussion
 * Apéro
+
+### Fabrication Workflow:
+1. human localize robot 
+2. human computes trajectory
+3. human triggers pick-and-place routine
+4. robot places an element
+5. human places a joint
+6. human places an element guided by AR app
+7. human places two joints
+
+4 Teams of five (per robot)
+    1 student on pc robot
+    1 student on teach pendant (emergency stop)
+    1 student feeds elements to the robot and places joints
+    1 student uses AR app
+    1 student places and holds element
+
