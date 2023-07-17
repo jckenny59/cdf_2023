@@ -61,7 +61,7 @@ class Element(object):
         super(Element, self).__init__()
 
         self.message = "dynamic_cylinder"
-        self.objecttype = "object"
+        self.type = "object"
         self.connector_frame_1 = None
         self.connector_frame_2 = None
         self.connector_range_1 = None
@@ -71,7 +71,6 @@ class Element(object):
         self.joint_frame_1 = None
         self.joint_frame_2 = None
         self.line = None
-        self.length = None
         self._type = ''
         self._base_frame = None
 

@@ -78,6 +78,7 @@ class Assembly(FromToData, FromToJson):
             self.network.attributes.update(attributes)
 
         self.network.default_node_attributes.update({
+            'elem_type' : 1,
             'is_planned': False,
             'is_built': False,
             'placed_by': 'human',
