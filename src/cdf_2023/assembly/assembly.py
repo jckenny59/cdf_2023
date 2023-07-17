@@ -16,7 +16,7 @@ from compas.datastructures import Network, mesh_offset
 from compas.artists import Artist
 from compas.colors import Color
 from compas.topology import connected_components
-from compas_rhino.conversions import line_to_rhino_curve, point_to_compas, point_to_rhino
+from compas_rhino.conversions import line_to_rhino_curve, point_to_compas, point_to_rhino, line_to_compas
 
 import rhinoscriptsyntax as rs
 import Rhino.Geometry as rg
@@ -80,13 +80,14 @@ class Assembly(FromToData, FromToJson):
         self.network.default_node_attributes.update({
             'is_planned': False,
             'is_built': False,
-            'placed_by': None,
+            'placed_by': 'human',
             'is_support': False,
             'is_held_by_robot': False,
-            'has_open_connector':False,
-            'color': None
+            'robot_frame':False,
+            'frame_measured':False
 
         })
+
 
         if default_element_attributes is not None:
             self.network.default_node_attributes.update(default_element_attributes)
@@ -142,9 +143,13 @@ class Assembly(FromToData, FromToJson):
             node[vkey] = {key: vdata[key] for key in vdata.keys() if key != 'element'}
             node[vkey]['element'] = vdata['element'].to_data()
 
-            if 'frame_est' in vdata:
-                if node[vkey]['frame_est']:
-                    node[vkey]['frame_est'] = node[vkey]['frame_est'].to_data()
+            if 'frame_measured' in vdata:
+                if node[vkey]['frame_measured']:
+                    node[vkey]['frame_measured'] = node[vkey]['frame_measured'].to_data()
+
+            if 'robot_frame' in vdata:
+                if node[vkey]['robot_frame']:
+                    node[vkey]['robot_frame'] = node[vkey]['robot_frame'].to_data()
 
         d['node'] = node
 
@@ -156,9 +161,13 @@ class Assembly(FromToData, FromToJson):
         for _vkey, vdata in data['node'].items():
             vdata['element'] = Element.from_data(vdata['element'])
 
-            if 'frame_est' in vdata:
-                if vdata['frame_est']:
-                    vdata['frame_est'] = Frame.from_data(vdata['frame_est']) #node[vkey]['frame_est'].to_data()
+            if 'frame_measured' in vdata:
+                if vdata['frame_measured']:
+                    vdata['frame_measured'] = Frame.from_data(vdata['frame_measured']) #node[vkey]['frame_measured'].to_data()
+
+            if 'robot_frame' in vdata:
+                if vdata['robot_frame']:
+                    vdata['robot_frame'] = Frame.from_data(vdata['robot_frame']) #node[vkey]['frame_measured'].to_data()
 
         self.network = Network.from_data(data)
 
@@ -195,11 +204,10 @@ class Assembly(FromToData, FromToJson):
             angle=0,
             shift_value=0,
             placed_by='human',
-            RCF = None,
+            robot_frame = None,
             on_ground=False,
             unit_index=0,
-            frame_id=None,
-            frame_est=None
+            frame_measured=None
         ):
         """Add an element to the assembly.
         """
@@ -255,10 +263,9 @@ class Assembly(FromToData, FromToJson):
 
         self.add_element(new_elem,
                          placed_by=placed_by,
-                         RCF=RCF,
+                         robot_frame=robot_frame,
                          on_ground=on_ground,
-                         frame_id=frame_id,
-                         frame_est=frame_est,
+                         frame_measured=frame_measured,
                          is_planned=True,
                          is_built=False,
                          is_support=False)
@@ -392,25 +399,34 @@ class Assembly(FromToData, FromToJson):
         return self.network.edges(data)
 
     def shortest_distance_between_two_lines(self, line1, line2):
+
+        # l1 = line_to_compas(line1)
+        # l2 = line_to_compas(line2)
+
+        # d = distance_line_line(l1, l2)
+        # return d
         a, b, d = gh.CurveProximity(line1, line2)
         return d
 
-    def collision_check(self, option_elems, tolerance):
+    def collision_check(self, current_key, option_elems, tolerance):
         """Check for collisions with previously built elements.
         """
 
         collision = False
         results = []
-
+        dist_list = []
         for key, elem in self.elements():
-            line1 = Artist(elem.line).draw()
-            for option_elem in option_elems:
-                line2 = Artist(option_elem.line).draw()
-                #results.append(True if distance_line_line(elem.line, option_elem.line, tol = 0.001) < assembly.globals['rod_radius']*2. + tolerance else False)
-                distance = self.shortest_distance_between_two_lines(line1, line2)
-                results.append(True if distance < (self.globals['rod_radius'] * 2. + tolerance) else False)
-            collision = True if True in results else False
-        return collision
+            if key != current_key:
+                line1 = Artist(elem.line).draw()
+                for option_elem in option_elems:
+                    line2 = Artist(option_elem.line).draw()
+                    #results.append(True if distance_line_line(elem.line, option_elem.line, tol = 0.001) < assembly.globals['rod_radius']*2. + tolerance else False)
+                    distance = self.shortest_distance_between_two_lines(line1, line2)
+                    results.append(True if distance < (self.globals['rod_radius'] * 2. + 0.015 + tolerance) else False)
+                    dist_list.append(distance)
+                collision = True if True in results else False
+                dist = min(dist_list)
+        return collision, dist
 
     def check_ground_collision(self, option_elems):
         """Check if an element touches the ground.
@@ -441,7 +457,7 @@ class Assembly(FromToData, FromToJson):
 
         d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
 
-        while d < self.globals['rod_radius'] * 2.0:
+        while d < self.globals['rod_radius'] * 2.0 + 0.015:
             i += 1
 
             if i >= max_i:
@@ -459,7 +475,7 @@ class Assembly(FromToData, FromToJson):
         max_i= 50
         d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
 
-        while abs(d - self.globals['rod_radius'] * 2.0) > epsilon:
+        while abs(d - (self.globals['rod_radius'] * 2.0 + 0.015)) > epsilon:
             i += 1
 
             if i >= max_i:
@@ -473,7 +489,7 @@ class Assembly(FromToData, FromToJson):
 
             # test distance
             d = self.shortest_distance_between_two_lines(elem_line1, elem_line2)
-            if d > self.globals['rod_radius'] * 2.0:
+            if d > self.globals['rod_radius'] * 2.0 + 0.015:
                 alpha = -alpha   # distance too large --> rotate back
             else:
                 alpha = alpha   # distance too small --> rotate in same direction
@@ -714,7 +730,7 @@ class Assembly(FromToData, FromToJson):
 
         return lever_arm_branches, resultant_branches
 
-    def close_rf_unit(self, current_key, flip, angle, shift_value, RCF=None, on_ground=False, added_frame_id=None, frame_est=None):
+    def close_rf_unit(self, current_key, flip, angle, shift_value, robot_frame=None, on_ground=False, frame_measured=None):
         """Add a module to the assembly.
         """
 
@@ -723,20 +739,20 @@ class Assembly(FromToData, FromToJson):
         for i in range(2):
             if i == 0:
                 placed_by = 'robot'
-                frame_id = None
-                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=None)
+                #frame_id = None
+                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=i, frame_measured=None)
                 keys_robot += list(self.network.nodes_where({'element': my_new_elem}))
             else:
                 placed_by = 'human'
-                frame_id = added_frame_id
-                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=frame_est)
+                #frame_id = added_frame_id
+                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=i, frame_measured=None)
                 keys_human = list((self.network.nodes_where({'element': my_new_elem})))
 
         keys_dict = {'keys_human': keys_human, 'keys_robot':keys_robot}
 
         return keys_dict
 
-    def join_branches(self, keys_pair, flip, angle, shift_value, new_elem, RCF=None, on_ground=False, added_frame_id=None, frame_est=None):
+    def join_branches(self, keys_pair, flip, angle, shift_value, new_elem, robot_frame=None, on_ground=False, frame_measured=None):
         """Join to branches by adding three elements.
         """
 
@@ -745,18 +761,18 @@ class Assembly(FromToData, FromToJson):
         for i in range(3):
             if i == 0:
                 placed_by = 'robot'
-                frame_id = None
-                my_new_elem = self.add_rf_unit_element(keys_pair[0], flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=None)
+                #frame_id = None
+                my_new_elem = self.add_rf_unit_element(keys_pair[0], flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=i, frame_measured=None)
                 keys_robot += list(self.network.nodes_where({'element': my_new_elem}))
             if i == 1:
                 placed_by = 'human'
-                frame_id = None
-                my_new_elem = self.add_rf_unit_element(keys_pair[0], flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=i, frame_id=frame_id, frame_est=None)
+                #frame_id = None
+                my_new_elem = self.add_rf_unit_element(keys_pair[0], flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=i, frame_measured=None)
                 keys_human = list((self.network.nodes_where({'element': my_new_elem})))
             if i == 2:
                 placed_by = 'human'
-                frame_id = None
-                my_new_elem = self.add_element(new_elem, placed_by=placed_by, RCF=RCF, on_ground=False, unit_index=2, frame_id=frame_id, frame_est=None)
+                #frame_id = None
+                my_new_elem = self.add_element(new_elem, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=2, frame_measured=None)
                 keys_human = list((self.network.nodes_where({'element': my_new_elem})))
 
         N = self.network.number_of_nodes()
@@ -906,7 +922,7 @@ class Assembly(FromToData, FromToJson):
         """Returns a list of elements.
         """
         keys = [key for key, element in self.elements()]
-        return [self.element(key).current_option_elements(flip, angle) for key in keys]
+        return [self.element(key).current_option_elements(self, flip, angle) for key in keys]
 
 
     def all_options_vectors(self, len):
@@ -1034,3 +1050,24 @@ class Assembly(FromToData, FromToJson):
 
         buildingplan['building_steps'] = building_steps
         compas.json_dump(buildingplan, path, pretty)
+
+
+    def assembly_to_json(self, path, pretty):
+
+        building_plan = {"node":{}}
+
+        for key, element, data in self.elements(data=True):
+            elem_dict = {}
+            elem_dict["element"] = {"frame" : self.element(key).frame.to_data()}
+
+            elem_dict["is_planned"] = data["is_planned"],
+            elem_dict["is_built"] = data['is_built'],
+            elem_dict["placed_by"] = data["placed_by"],
+            elem_dict["is_support"] = data["is_support"],
+            elem_dict["is_held_by_robot"] = data["is_held_by_robot"],
+            elem_dict["robot_frame"] = data["robot_frame"],
+            elem_dict["frame_measured"] = data["frame_measured"]
+
+            building_plan["node"][str(key)] = elem_dict
+
+        compas.json_dump(building_plan, path, pretty)
