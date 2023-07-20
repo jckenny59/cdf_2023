@@ -72,7 +72,8 @@ class Assembly(FromToData, FromToJson):
                  default_connection_attributes=None):
 
         self.network = Network()
-        self.network.attributes.update({'name': 'Assembly'})
+        self.network.attributes.update({
+            'name' : 'Assembly'})
 
         if attributes is not None:
             self.network.attributes.update(attributes)
@@ -80,15 +81,16 @@ class Assembly(FromToData, FromToJson):
         self.network.default_node_attributes.update({
             'elem_type' : 1,
             'is_planned': False,
-            'is_built': False,
-            'placed_by': 'human',
-            'is_support': False,
-            'is_held_by_robot': False,
-            'robot_frame':False,
+            'is_built' : False,
+            'placed_by' : 'human',
+            'is_support' : False,
+            'robot_name' : 'AA',
+            'is_held_by_robot' : False,
+            'robot_AA_base_frame' : False,
+            'robot_AB_base_frame' : False,
             'frame_measured':False
 
         })
-
 
         if default_element_attributes is not None:
             self.network.default_node_attributes.update(default_element_attributes)
@@ -148,9 +150,13 @@ class Assembly(FromToData, FromToJson):
                 if node[vkey]['frame_measured']:
                     node[vkey]['frame_measured'] = node[vkey]['frame_measured'].to_data()
 
-            if 'robot_frame' in vdata:
-                if node[vkey]['robot_frame']:
-                    node[vkey]['robot_frame'] = node[vkey]['robot_frame'].to_data()
+            if 'robot_AA_base_frame' in vdata:
+                if node[vkey]['robot_AA_base_frame']:
+                    node[vkey]['robot_AA_base_frame'] = node[vkey]['robot_AA_base_frame'].to_data()
+
+            if 'robot_AB_base_frame' in vdata:
+                if node[vkey]['robot_AB_base_frame']:
+                    node[vkey]['robot_AB_base_frame'] = node[vkey]['robot_AB_base_frame'].to_data()
 
         d['node'] = node
 
@@ -166,9 +172,13 @@ class Assembly(FromToData, FromToJson):
                 if vdata['frame_measured']:
                     vdata['frame_measured'] = Frame.from_data(vdata['frame_measured']) #node[vkey]['frame_measured'].to_data()
 
-            if 'robot_frame' in vdata:
-                if vdata['robot_frame']:
-                    vdata['robot_frame'] = Frame.from_data(vdata['robot_frame']) #node[vkey]['frame_measured'].to_data()
+            if 'robot_AA_base_frame' in vdata:
+                if vdata['robot_AA_base_frame']:
+                    vdata['robot_AA_base_frame'] = Frame.from_data(vdata['robot_AA_base_frame']) #node[vkey]['frame_measured'].to_data()
+
+            if 'robot_AB_base_frame' in vdata:
+                if vdata['robot_AB_base_frame']:
+                    vdata['robot_AB_base_frame'] = Frame.from_data(vdata['robot_AB_base_frame']) #node[vkey]['frame_measured'].to_data()
 
         self.network = Network.from_data(data)
 
@@ -205,7 +215,9 @@ class Assembly(FromToData, FromToJson):
             angle=0,
             shift_value=0,
             placed_by='human',
-            robot_frame = None,
+            robot_name = 'AA',
+            robot_AA_base_frame = None,
+            robot_AB_base_frame = None,
             on_ground=False,
             unit_index=0,
             frame_measured=None
@@ -264,7 +276,9 @@ class Assembly(FromToData, FromToJson):
 
         self.add_element(new_elem,
                          placed_by=placed_by,
-                         robot_frame=robot_frame,
+                         robot_name=robot_name,
+                         robot_AA_base_frame=robot_AA_base_frame,
+                         robot_AB_base_frame=robot_AB_base_frame,
                          on_ground=on_ground,
                          frame_measured=frame_measured,
                          is_planned=True,
@@ -731,7 +745,16 @@ class Assembly(FromToData, FromToJson):
 
         return lever_arm_branches, resultant_branches
 
-    def close_rf_unit(self, current_key, flip, angle, shift_value, robot_frame=None, on_ground=False, frame_measured=None):
+    def close_rf_unit(self,
+                      current_key,
+                      flip,
+                      angle,
+                      shift_value,
+                      robot_name='AA',
+                      robot_AA_base_frame=None,
+                      robot_AB_base_frame=None,
+                      on_ground=False,
+                      frame_measured=None):
         """Add a module to the assembly.
         """
 
@@ -741,19 +764,49 @@ class Assembly(FromToData, FromToJson):
             if i == 0:
                 placed_by = 'robot'
                 #frame_id = None
-                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=i, frame_measured=None)
+                my_new_elem = self.add_rf_unit_element(current_key,
+                                                       flip=flip,
+                                                       angle=angle,
+                                                       shift_value=shift_value,
+                                                       placed_by=placed_by,
+                                                       robot_name='AA',
+                                                       robot_AA_base_frame=robot_AA_base_frame,
+                                                       robot_AB_base_frame=robot_AB_base_frame,
+                                                       on_ground=False,
+                                                       unit_index=i,
+                                                       frame_measured=None)
                 keys_robot += list(self.network.nodes_where({'element': my_new_elem}))
             else:
                 placed_by = 'human'
                 #frame_id = added_frame_id
-                my_new_elem = self.add_rf_unit_element(current_key, flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=i, frame_measured=None)
+                my_new_elem = self.add_rf_unit_element(current_key,
+                                                       flip=flip,
+                                                       angle=angle,
+                                                       shift_value=shift_value,
+                                                       placed_by=placed_by,
+                                                       robot_name='AA',
+                                                       robot_AA_base_frame=robot_AA_base_frame,
+                                                       robot_AB_base_frame=robot_AB_base_frame,
+                                                       on_ground=False,
+                                                       unit_index=i,
+                                                       frame_measured=None)
                 keys_human = list((self.network.nodes_where({'element': my_new_elem})))
 
         keys_dict = {'keys_human': keys_human, 'keys_robot':keys_robot}
 
         return keys_dict
 
-    def join_branches(self, keys_pair, flip, angle, shift_value, new_elem, robot_frame=None, on_ground=False, frame_measured=None):
+    def join_branches(self,
+                      keys_pair,
+                      flip,
+                      angle,
+                      shift_value,
+                      new_elem,
+                      robot_name = 'AA',
+                      robot_AA_base_frame = None,
+                      robot_AB_base_frame = None,
+                      on_ground=False,
+                      frame_measured=None):
         """Join to branches by adding three elements.
         """
 
@@ -763,17 +816,44 @@ class Assembly(FromToData, FromToJson):
             if i == 0:
                 placed_by = 'robot'
                 #frame_id = None
-                my_new_elem = self.add_rf_unit_element(keys_pair[0], flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=i, frame_measured=None)
+                my_new_elem = self.add_rf_unit_element(keys_pair[0],
+                                                       flip=flip,
+                                                       angle=angle,
+                                                       shift_value=shift_value,
+                                                       placed_by=placed_by,
+                                                       robot_name=robot_name,
+                                                       robot_AA_base_frame=robot_AA_base_frame,
+                                                       robot_AB_base_frame=robot_AB_base_frame,
+                                                       on_ground=False,
+                                                       unit_index=i,
+                                                       frame_measured=None)
                 keys_robot += list(self.network.nodes_where({'element': my_new_elem}))
             if i == 1:
                 placed_by = 'human'
                 #frame_id = None
-                my_new_elem = self.add_rf_unit_element(keys_pair[0], flip=flip, angle=angle, shift_value=shift_value, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=i, frame_measured=None)
+                my_new_elem = self.add_rf_unit_element(keys_pair[0],
+                                                       flip=flip,
+                                                       angle=angle,
+                                                       shift_value=shift_value,
+                                                       placed_by=placed_by,
+                                                       robot_name=robot_name,
+                                                       robot_AA_base_frame=robot_AA_base_frame,
+                                                       robot_AB_base_frame=robot_AB_base_frame,
+                                                       on_ground=False,
+                                                       unit_index=i,
+                                                       frame_measured=None)
                 keys_human = list((self.network.nodes_where({'element': my_new_elem})))
             if i == 2:
                 placed_by = 'human'
                 #frame_id = None
-                my_new_elem = self.add_element(new_elem, placed_by=placed_by, robot_frame=robot_frame, on_ground=False, unit_index=2, frame_measured=None)
+                my_new_elem = self.add_element(new_elem,
+                                               placed_by=placed_by,
+                                               robot_name=robot_name,
+                                               robot_AA_base_frame=robot_AA_base_frame,
+                                               robot_AB_base_frame=robot_AB_base_frame,
+                                               on_ground=False,
+                                               unit_index=2,
+                                               frame_measured=None)
                 keys_human = list((self.network.nodes_where({'element': my_new_elem})))
 
         N = self.network.number_of_nodes()
@@ -976,7 +1056,7 @@ class Assembly(FromToData, FromToJson):
             If 'open' : yeild all open connectors_ranges.
             If 'closed' : yeild all closed connectors_ranges.
 
-        Yields
+        Yieldsframe
         ------
         2-tuple
             The connectors as a (key, cone) tuple.
