@@ -1,37 +1,143 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-import firebase_admin
-from firebase_admin import db
+
 import json
+import pyrebase
+import os
+
 
 config = {
-  "type": "service_account",
-  "project_id": "cdf-2023",
-  "private_key_id": "44b2bbe229c8b8dcd5de9be910f622e730537c4a",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQClMvEe61NPD1T9\nvblYP0LjAR3K1QrtH5LCrphn9H0TIvfWm6CVD0jgZzDRw1lxRl8gSsKfrRavnKN7\nrmz8211IBm9ti0tetefsiigj8OPitEpVDWhAcJyDV1LA3ZvqD6AeLg5TClZkai1Q\nPK5F0C41pCxNU2C0JvNDuef/D+FW+BBCneAWBA3CmQcGpDGmTWShY3ryJP6Q6tMT\nI6E6l+ndFVHMIcVjiKKipsdhhguFe+0b6H9hJtIUz4NjC7FW2N/vAAFjMs3pq5sb\nJENkJt+rZl/7tpz+OVGF5ZTlyatLyg9kh65xsit/kFqBt7FFDNkyXC8jDQPcaUJ+\nN0MfcbRNAgMBAAECggEAIn88TdYba/+KIoCbczumpovFomURpom41nGqPs8VzUi4\nk3alNmteLwotbihKhbaJx88EzF5TRfHCS+IVPUo7tP4vB6OWZh07ZLBHCJZVqDI4\n8YDeu9IoRN8X11GPrPV9XMAGWr3mY4qukrpRNB/wfmAdpjoakBQwKXzpXuB8kHHf\nWitUxaLCd0Ogi60mdTrSLlbdWu0reV5TPJme1eWFhBwTto9bHZRO/ixWcfIhCLVH\nYQ03PQ/gWmGnICC0POZ0lxbu6cBESPDIynd1Do76O2+/OVhhc3xrGV8YLa5TQhZ/\nJ9BATYtkzIJE3Ud+8WEXUmM/eyYbQmtexnfNgeM0+wKBgQDl/r/9JYVSiCHPrVAC\nGQNr0BxSdw9o0h54BZUdN2natIlopTp98YC+ZTops/+tHorjXPw5ejfX8TvFUpPy\nD0rRW65NA9W+jMUKmBrnQ+Wi9dgLEvLCeVL4dP0zzkvB7Q/cF4EiSPLNxvOYw/GG\nM1ohUFpLdfBMhznYOkKHz3y57wKBgQC34KgK5Vrl88iZk9P2pDBr2yAzC1DgEDEH\nbfN2oypBEpyxewXQL96POMnTSwcE6BmjPY9wf+iQA/H9/JFeEnuJymOT+tDW9exX\nHgxHDbBFJa4B1aB+bEkFJVS7gHD/DUSB6oWa9/8Gen9+Zih7gciNv4WNskOWulNk\nbqabWYVhgwKBgQCUmSakQWTFcS0fSCQEZvLd6qUR5tju6atD8p9oNBBRfQm2seJ7\n0thSq4aLwT91M+Gais5vuHZyL+tlTzhFUfoOEEUqf0rPhZYdhS8EssqgomSGqyRr\n4AVqf/PEUAqEbk0r74fAhg9SQrPKxPa8tVsLYSYl0TqDx27pNKMdqkI0wwKBgD88\n4S4WIQPSqpu+zngVkZ2WV+WWL7NPfj0q4D9d8Cs/Bmq3f5FQ1T72bdrgA8L5O8/7\nXPh41Peqk7AhC7GJs7j4xPRgnzA+lZCEgf5xw7yUL9rrqG2yOg6t/w0ZKENfQb9Y\nc6iPP8LvoCdNZQDM6rdtNbY8p6gP3pw8vcnRqOCXAoGAC1vj1AVpMKj7jRWyEz+k\nfw4/kBfdgUrmPyGD3puKXYijebUbU7AtTmLWY10STo+NlQhg4ktFMeyKWi1UJctW\n6OKs8jEybfIp8juS996j3KaK17HjXJd2lDZONx0cOrqzSSPhZjKPq8LXrwPdCHud\nb8CWJrnM0UFK8sUGG2Dvmpo=\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-adminsdk-ul6gx@cdf-2023.iam.gserviceaccount.com",
-  "client_id": "101917337998555403449",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ul6gx%40cdf-2023.iam.gserviceaccount.com"
+    "apiKey": "AIzaSyAO_YVROUIc866BqgWgcBpPxUe6SVG5O9g",
+    "authDomain": "cdf-project-f570f.firebaseapp.com",
+    "databaseURL": "https://cdf-project-f570f-default-rtdb.europe-west1.firebasedatabase.app",
+    "projectId": "cdf-project-f570f",
+    "storageBucket": "cdf-project-f570f.appspot.com",
+    "messagingSenderId": "641027065982",
+    "appId": "1:641027065982:web:20ca92f0a2326bc3dab02f",
+    "measurementId": "G-RZ5BVHNGK8"
 }
 
-cred_obj = firebase_admin.credentials.Certificate(config)
-default_app = firebase_admin.initialize_app(cred_obj, {
-	"databaseURL":"https://cdf-2023-default-rtdb.europe-west1.firebasedatabase.app"
-	})
+# initialize the connection to firebase
+firebase = pyrebase.initialize_app(config)
 
-ref = db.reference("/")
+# reference to firebase database
+db = firebase.database()
 
-def upload_dict(dict):
-    ref.set(dict)
 
-def upload_from_file(path):
-    with open(path, "r") as f:
-        file_contents = json.load(f)
-    ref.set(file_contents)
-    #print(ref.get())
+def stream_handler(message):
+    print(message["event"])
+    print(message["path"])
+    print(message["data"])
+
+
+def set_json_data(json_f, parentname, keys):
+    with open(json_f) as json_file:
+        json_data = json.load(json_file)
+        children = []
+        for key in keys:
+            values = json_data[key]
+            children.append(values)
+
+    for child, key in zip(children, keys):
+        db.child(parentname).child(key).set(child)
+
+
+def set_json_data_joints(json_f):
+    with open(json_f) as json_file:
+        json_data = json.load(json_file)
+
+    db.child("Joints").set(json_data)
+
+
+def set_qr_frames(json_fr):
+    with open(json_fr) as json_file:
+        json_data = json.load(json_file)
+
+    db.child("QRFrames").set(json_data)
+
+
+# get keys_built
+def get_keys_built():
+    keys_built = []
+    keys = db.child("Built Keys").get()
+    if keys.each():
+        for key in keys.each():
+            # print("key to built key ", key.key())
+            keys_built.append(key.val())
+    return keys_built
+
+
+def set_keys_built(keys):
+    data = {}
+    for key in keys:
+        data[str(key)] = str(key)
+    db.child("Built Keys").set(data)
+
+
+def remove_key_built(key):
+    db.child("Built Keys").child(str(key)).remove()
+
+
+def update_robot_frame(index, robot_frame, frame):
+    db.child("Design").child("node").child(str(index)).child(robot_frame).set(frame)
+
+
+def add_key_built(new_key_built):
+    db.child("Built Keys").update({str(new_key_built): str(new_key_built)})
+
+
+# get users' ids
+def get_users():
+    users_ids = []
+    users = db.child("Users").get()
+    for user in users.each():
+        print(user.key())
+        users_ids.append(user.key())
+        # print("Selected Key is ", user.val()["selectedKey"])
+        # print("Selected by user Nr.", user.val()["userID"])
+    return users_ids
+
+
+def get_users_attribute(attribute):
+    users_attributes = []
+    users = db.child("user").get()
+    for user in users.each():
+        users_attributes.append(user.val()[attribute])
+    return users_attributes
+
+
+def get_json_data(name, childname):
+    json_data = {}
+    data = db.child(name).child(childname).get()
+    if data.each():
+        for d in data.each():
+            json_data[d.key()] = d.val()
+        return json_data
+    else:
+        dt = db.child(name).child(childname).get().val()
+        return dt
+
+
+def listen():
+    pass
+    # my_stream = db.child("Built Keys").stream(stream_handler)
+
+# add a stream_id for multiple streams
+# my_stream = db.child("posts").stream(stream_handler, stream_id="new_post")
+
+
+def close_stream(my_stream):
+    my_stream.close()
+
 
 if __name__ == "__main__":
 
-    upload_from_file("C:/Users/lidet/workspace/projects/cdf_2023/data/assembly/assembly_test.json")
+    # add_key_built(4)
+    # remove_key_built(10)
+    print(get_keys_built())
+    # my_stream = db.child("Built Keys").stream(stream_handler)
+    # my_stream = db.child("Users").stream(stream_handler)
+    # close_stream(my_stream)
+    # remove_key_built(17)
