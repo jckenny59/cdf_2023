@@ -100,8 +100,8 @@ Time: 09:00-18:00
 #### Session 11: 13:30-18:00 
 * Clean up
 * Finalisation and presentation preparation
-* Final discussion
-* Apéro
+* 16:00-17:00 Final discussion 
+* 17:00-18:00 Apéro
 
 
 
